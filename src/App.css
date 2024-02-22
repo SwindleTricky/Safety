@@ -1,7 +1,6 @@
 .App {
   text-align: center;
 }
-
 .App-logo {
   height: 40vmin;
   pointer-events: none;
@@ -24,9 +23,59 @@
   color: white;
 }
 
+a:link {text-decoration: none; }
+
 .App-link {
   color: #61dafb;
 }
+.card{
+  background-color: 	rgba(255, 255, 255, 0.2) !important;
+  border-color:rgba(255, 255, 255, 0.2) !important
+}
+.card-custom:hover{
+  background-color: 	rgba(251,221,18, 0.5) !important;
+  border-color:rgba(251,221,18, 0.2) !important
+}
+.card-body {
+  color: rgb(0, 0, 0) !important;
+  /* background-color: #262D34; */
+}
+
+.button-custom {
+  color: white !important ;
+  background-color:	#006203 !important;
+  border-color: 	#006203 !important;
+}
+/* .input-custom{
+  background-color: #2C353D !important;
+  color: #858EAD !important;
+  border-color: #2C353D !important;
+} */
+::placeholder{
+  color: #858EAD !important;
+}
+
+.Nav-color{
+  background-color: #262D34 !important;
+}
+
+.shopping-cart-btn {
+  position: fixed ;
+}
+
+.card-body-slide{
+  top: 10px;
+  z-index: 9999;
+}
+
+.topic-custom{
+  color: #FF6934;
+  font-size: larger;
+  font-weight: bold;
+  text-align: center;
+}
+
+
 
 @keyframes App-logo-spin {
   from {
