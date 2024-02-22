@@ -9,6 +9,7 @@ import TestAPI from "./pages/testAPI";
 import Login from "./pages/login";
 import FormDetail from "./pages/form";
 import "bootstrap/dist/css/bootstrap.min.css";
+import 'sweetalert2/dist/sweetalert2.all.min.js'
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 setInterval(() => {
@@ -19,7 +20,7 @@ setInterval(() => {
       window.location.reload();
     }
   }
-}, 1000 * 60 * 5 * 1); // 5 min per check
+}, 1000 * 60 * 2 * 1); // 5 min per check
 
 root.render(
   <React.StrictMode>

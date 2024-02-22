@@ -32,35 +32,79 @@ const FormDetail = () => {
   let req_id = parseURLParams(window.location.href);
 
   useEffect(() => {
-    async function fetchData() {
+    async function getData() {
       try {
-        const apiServiceRes = await axios.post(api_service + "/sovereqid", {
-          idReq: req_id.req_id[0],
-        });
-        setData(apiServiceRes.data);
-
-        const [empInfoRes, picInfoRes] = await Promise.all([
-          axios.get(api_emp + "/emp-info/" + apiServiceRes.data[0].EMP_CD),
-          axios.get(
-            api_emp + "/emp-info/" + (apiServiceRes.data[0].ACTION_PIC || "")
-          ), // Include null check for ACTION_PIC
-        ]);
-        setEmp(empInfoRes.data);
-        setPICFullName(picInfoRes.data);
-
-        const picListRes = await axios.get(api_service + "/ul");
-        setPicList(picListRes.data);
+        await axios
+          .post(
+            api_service + "/sovereqid",
+            {
+              idReq: req_id.req_id[0],
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          )
+          .then((res) => {
+            setData(res.data);
+          });
       } catch (err) {
-        console.error("Error fetching data:", err);
-      } finally {
-        setLoad(true);
-        setLoadEmp(true);
-        setLoadPic(true);
+        // throw err
+        console.log(err);
       }
     }
+    getData();
+  }, []);
 
-    fetchData();
-  }, [req_id]);
+  useEffect(() => {
+    if (data !== undefined) {
+      setLoad(true);
+    }
+  }, [data]);
+
+  useEffect(() => {
+    async function getEmpDetail() {
+      try {
+        const actionPic = data[0].ACTION_PIC ? data[0].ACTION_PIC : "" 
+        const [res1, res2] = await Promise.all([
+          axios.get(api_emp + "/emp-info/" + data[0].EMP_CD),
+          axios.get(api_emp + "/emp-info/" + actionPic),
+        ]);
+        setEmp(res1.data);
+        setPICFullName(res2.data);
+      } catch (err) {
+        console.log(err);
+      }
+    }
+    getEmpDetail();
+  }, [data]);
+
+  useEffect(() => {
+    async function getList() {
+      try {
+        axios.get(api_service + "/ul").then((res) => {
+          setPicList(res.data);
+        });
+      } catch (err) {
+        // throw err
+        console.log(err);
+      }
+    }
+    getList();
+  }, [data]);
+
+  useEffect(() => {
+    if (empData !== undefined) {
+      setLoadEmp(true);
+    }
+  }, [empData]);
+
+  useEffect(() => {
+    if (picList !== undefined) {
+      setLoadPic(true);
+    }
+  }, [picList]);
 
   if (!Load || !LoadEmp || !LoadPic) {
     console.log("LOADING..");
@@ -179,11 +223,7 @@ const FormDetail = () => {
       </div>
       <div className="nice-form-group">
         <label id="guideForm">Counter measure :</label>
-        {status === 2 ? (
-          <textarea id="action"></textarea>
-        ) : (
-          <small>{data[0].ACTION}</small>
-        )}
+        {status === 2 ?  <textarea id="action"></textarea> : <small></small>}
       </div>
       {status === 3 ? (
         <div className="nice-form-group">
@@ -196,28 +236,14 @@ const FormDetail = () => {
 
       <div className="row">
         <div className="col-6">
-          {status === 3 ? (
-            <>
-              <Form.Group controlId="date_picker">
-              <FormLabel>Due date:</FormLabel>
-              <FormControl
-                type="date"
-                value={data[0].DUE_DATE.split("T")[0]} // Use ISOString for REST API
-                onChange={handleDateChange}
-                disabled
-              />
-            </Form.Group>
-            </>
-          ) : (
-            <Form.Group controlId="date_picker">
-              <FormLabel>Pick your expected due date:</FormLabel>
-              <FormControl
-                type="date"
-                value={selectedDate.toISOString().split("T")[0]} // Use ISOString for REST API
-                onChange={handleDateChange}
-              />
-            </Form.Group>
-          )}
+          <Form.Group controlId="date_picker">
+            <FormLabel>Pick your expected due date:</FormLabel>
+            <FormControl
+              type="date"
+              value={selectedDate.toISOString().split("T")[0]} // Use ISOString for REST API
+              onChange={handleDateChange}
+            />
+          </Form.Group>
         </div>
         {status === 3 ? (
           <div className="col-6">
@@ -277,13 +303,7 @@ const FormDetail = () => {
               </div>
               <div className="nice-form-group">
                 <label id="timeForm">Request Time :</label>
-                <small>
-                  {data
-                    ? data[0].DATE_TIME.split("T")[0] +
-                      " " +
-                      data[0].DATE_TIME.split("T")[1].split(".")[0]
-                    : "Undefinded"}
-                </small>
+                <small>{data ? data[0].DATE_TIME : "Undefinded"}</small>
               </div>
               <div className="nice-form-group">
                 <label id="requistorForm">Requestor : </label>
@@ -447,7 +467,7 @@ const FormDetail = () => {
             {
               headers: {
                 "Content-Type": "multipart/form-data",
-                Authorization: token.token,
+                "Authorization": token.token
               },
             }
           )

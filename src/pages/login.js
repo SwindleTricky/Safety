@@ -38,6 +38,7 @@ function Login() {
             MySwal.fire({
               title: "Successfully!",
               text: "Loged in",
+              icon: "success",
             }).then((result) => {
               if(result.isConfirmed || result.dismiss){
                 window.location.replace("/")
