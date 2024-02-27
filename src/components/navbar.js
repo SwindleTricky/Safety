@@ -18,7 +18,7 @@ function Navbarcomp() {
     const name = account.name.split(" ");
     isLogin = (
       <NavDropdown title={`Hello, ${name[0]}`} id="navbarScrollingDropdown">
-        <NavDropdown.Item href="#action3">My Account</NavDropdown.Item>
+        <NavDropdown.Item href="/piclist">My Account</NavDropdown.Item>
         <NavDropdown.Divider />
         <NavDropdown.Item onClick={logOut}>Log out</NavDropdown.Item>
       </NavDropdown>
