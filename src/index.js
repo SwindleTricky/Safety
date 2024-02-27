@@ -8,6 +8,7 @@ import reportWebVitals from "./reportWebVitals";
 import TestAPI from "./pages/testAPI";
 import Login from "./pages/login";
 import FormDetail from "./pages/form";
+import Testimage from "./pages/test_image";
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'sweetalert2/dist/sweetalert2.all.min.js'
 
@@ -31,6 +32,7 @@ root.render(
         <Route path="/login" element={<Login />} />
         <Route path="/testAPI" element={<TestAPI />} />
         <Route path="/form" element={<FormDetail />} />
+        <Route path="/Test_image" element={<Testimage />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>

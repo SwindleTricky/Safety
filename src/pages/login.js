@@ -4,8 +4,8 @@ import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function Login() {
-  if(localStorage.getItem("token")){
-    window.location.replace("/")
+  if (localStorage.getItem("token")) {
+    window.location.replace("/");
   }
   const api_service = process.env.REACT_APP_API_SERVICE;
   const MySwal = withReactContent(Swal);
@@ -31,7 +31,7 @@ function Login() {
               "initEx",
               JSON.stringify({
                 initial: Date.now(),
-                expiresOn: Date.now() + 1000 * 60 * 60 * 1 // 12 hours in ms 1000 ms * 60 s * 60 m * 24 hr
+                expiresOn: Date.now() + 1000 * 60 * 60 * 1, // 12 hours in ms 1000 ms * 60 s * 60 m * 24 hr
               })
             );
             localStorage.setItem("token", JSON.stringify(res.data));
@@ -40,14 +40,22 @@ function Login() {
               text: "Loged in",
               icon: "success",
             }).then((result) => {
-              if(result.isConfirmed || result.dismiss){
-                window.location.replace("/")
+              if (result.isConfirmed || result.dismiss) {
+                window.location.replace("/");
               }
             });
           }
         })
         .catch((error) => {
-          console.log(error.response.status);
+          console.log(error.response);
+          MySwal.fire({
+            title: "ERROR " + error.response.status,
+            text:
+              error.response.status === 401
+                ? "Username or password incorrect"
+                : error.response.statusText,
+            icon: "error",
+          });
         });
     } catch (err) {
       console.log(err);

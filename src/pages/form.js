@@ -5,7 +5,7 @@ import ModalImage from "react-modal-image";
 import axios from "axios";
 import Select from "react-dropdown-select";
 import "../css/pbar.css";
-import { Form, FormLabel, FormControl } from "react-bootstrap";
+import { Col, Form, FormLabel, FormControl } from "react-bootstrap";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 
@@ -29,6 +29,7 @@ const FormDetail = () => {
   const [pICFullName, setPICFullName] = useState({
     0: { EMP_CD: "", EMP_NAME: "", SECTION: "" },
   });
+  const [image_after, setImage_after] = useState();
   let req_id = parseURLParams(window.location.href);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ const FormDetail = () => {
           idReq: req_id.req_id[0],
         });
         setData(apiServiceRes.data);
-
+        // console.log("apiservice"+ apiServiceRes.data)
         const [empInfoRes, picInfoRes] = await Promise.all([
           axios.get(api_emp + "/emp-info/" + apiServiceRes.data[0].EMP_CD),
           axios.get(
@@ -47,6 +48,15 @@ const FormDetail = () => {
         ]);
         setEmp(empInfoRes.data);
         setPICFullName(picInfoRes.data);
+        // const file = new Blob(
+        //   [new Uint8Array(apiServiceRes.data[0].IMG_DETAIL)],
+        //   {
+        //     type: "image/jpeg",
+        //   }
+        // );
+        
+        // setImage_after(URL.createObjectURL(file));
+        // console.log(URL.createObjectURL(file));
 
         const picListRes = await axios.get(api_service + "/ul");
         setPicList(picListRes.data);
@@ -60,12 +70,12 @@ const FormDetail = () => {
     }
 
     fetchData();
-  }, [req_id]);
-
+  }, []);
   if (!Load || !LoadEmp || !LoadPic) {
     console.log("LOADING..");
     return <div>Load.... . .. . . </div>;
   }
+
 
   let empDetail = "";
   if (LoadEmp) {
@@ -75,6 +85,7 @@ const FormDetail = () => {
   let imgID = parseURLParams(data[0].IMG);
   let imgURL = "https://lh3.google.com/u/0/d/" + imgID.id;
   let imgURL_small = "https://drive.google.com/thumbnail?id=" + imgID.id;
+  // let imgURL_test = "https://drive.usercontent.google.com/download?id=" + imgID.id;
   let status = parseInt(data[0].STATUS);
 
   let options = [];
@@ -96,6 +107,7 @@ const FormDetail = () => {
     }
   };
   const handleFileChange = (event) => {
+    console.log(event.target.size)
     setPicture(event.target.files[0]);
   };
 
@@ -104,6 +116,9 @@ const FormDetail = () => {
     console.log(selectedDate);
   };
 
+  // let img_after = URL.createObjectURL(file)
+
+  // console.log(data[0].IMG_DETAIL)
   let progress_bar = (
     <div className="stepper-wrapper">
       <div
@@ -153,7 +168,7 @@ const FormDetail = () => {
       </div>
     </div>
   );
-  let status1_label = (
+  let status1_label = token?.role === "ADMIN" ? (
     <div className="nice-form-group">
       <label id="guideForm">Selection PIC :</label>
       <Select
@@ -163,6 +178,8 @@ const FormDetail = () => {
         options={options}
       />
     </div>
+  ) : (
+    ""
   );
 
   let status2_label = (
@@ -182,7 +199,7 @@ const FormDetail = () => {
         {status === 2 ? (
           <textarea id="action"></textarea>
         ) : (
-          <small>{data[0].ACTION}</small>
+          <small id="action">{data[0].ACTION}</small>
         )}
       </div>
       {status === 3 ? (
@@ -191,22 +208,25 @@ const FormDetail = () => {
           <textarea id="remark"></textarea>
         </div>
       ) : (
-        ""
+        <div className="nice-form-group">
+          <label id="guideForm">Remark :</label>
+          <small id="remark">{data[0].REMARK_DETAIL}</small>
+        </div>
       )}
 
       <div className="row">
-        <div className="col-6">
-          {status === 3 ? (
+        <div className="col-6 mt-3">
+          {status > 2 ? (
             <>
               <Form.Group controlId="date_picker">
-              <FormLabel>Due date:</FormLabel>
-              <FormControl
-                type="date"
-                value={data[0].DUE_DATE.split("T")[0]} // Use ISOString for REST API
-                onChange={handleDateChange}
-                disabled
-              />
-            </Form.Group>
+                <FormLabel>Due date:</FormLabel>
+                <FormControl
+                  type="date"
+                  value={data[0].DUE_DATE.split("T")[0]} // Use ISOString for REST API
+                  onChange={handleDateChange}
+                  disabled
+                />
+              </Form.Group>
             </>
           ) : (
             <Form.Group controlId="date_picker">
@@ -220,7 +240,7 @@ const FormDetail = () => {
           )}
         </div>
         {status === 3 ? (
-          <div className="col-6">
+          <div className="col-6 mt-3">
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>Insert your image :</Form.Label>
               <Form.Control type="file" onChange={handleFileChange} />
@@ -232,12 +252,61 @@ const FormDetail = () => {
       </div>
     </>
   );
-  let showLabel;
+  let showLabel = "";
   if (status === 1) {
     showLabel = status1_label;
-  } else if (status >= 2) {
+  } else if (status >= 2 && token) {
     showLabel = status2_label;
   }
+
+  let button_comp = ((
+    <details>
+      <summary>
+        <div className="row">
+          <div className="col-6 d-flex align-items-start justify-content-start">
+            {/* {status === 3 ? (
+              <button
+                className="btn btn-success"
+                onClick={() => update_form(status)}
+              >
+                {" "}
+                Save
+              </button>
+            ) : (
+              ""
+            )} */}
+          </div>
+          <div className="col-6 d-flex align-items-end justify-content-end">
+            <button
+              className="btn btn-success"
+              onClick={() => update_form(status)}
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="16"
+                height="16"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="feather feather-code"
+              >
+                <polyline points="16 18 22 12 16 6" />
+                <polyline points="8 6 2 12 8 18" />
+              </svg>{" "}
+              {status === 3
+                ? "Finish"
+                : status === 4
+                ? "Approve"
+                : "Issue"}
+            </button>
+          </div>
+        </div>
+      </summary>
+    </details>
+  ))
 
   return (
     <div className="container">
@@ -288,7 +357,7 @@ const FormDetail = () => {
               <div className="nice-form-group">
                 <label id="requistorForm">Requestor : </label>
                 <small>
-                  {data ? data[0].EMP_CD : "Undefinded"} {empDetail}
+                  {data ? data[0].EMP_CD : "Undefinded"} {empDetail? empDetail : ""}
                 </small>
               </div>
               <div className="nice-form-group">
@@ -326,6 +395,15 @@ const FormDetail = () => {
                   <tbody>
                     <tr>
                       <td className="pe-5">
+                        {/* <Col>
+                          <img
+                            crossOrigin="anonymous"
+                            style={{ width: "20rem" }}
+                            src={imgURL_test}
+                            alt="test_image"
+                            rounded="True"
+                          />
+                        </Col> */}
                         <ModalImage
                           crossOrigin="anonymous"
                           className="className"
@@ -335,13 +413,13 @@ const FormDetail = () => {
                         />
                       </td>
                       <td>
-                        {/* <ModalImage
+                        <ModalImage
                           crossOrigin="anonymous"
                           className="className"
                           style={{ width: "10rem" }}
-                          small={imgURL_small}
+                          small={image_after}
                           large={imgURL}
-                        /> */}
+                        />
                       </td>
                     </tr>
                   </tbody>
@@ -353,56 +431,7 @@ const FormDetail = () => {
             {/* Other form groups go here */}
 
             {/* Button */}
-            {token ? (
-              <details>
-                <summary>
-                  <div className="row">
-                    <div className="col-6 d-flex align-items-start justify-content-start">
-                      {status === 3 ? (
-                        <button
-                          className="btn btn-success"
-                          onClick={() => update_form(status)}
-                        >
-                          {" "}
-                          Save
-                        </button>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-                    <div className="col-6 d-flex align-items-end justify-content-end">
-                      <button
-                        className="btn btn-success"
-                        onClick={() => update_form(status)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          width="16"
-                          height="16"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          className="feather feather-code"
-                        >
-                          <polyline points="16 18 22 12 16 6" />
-                          <polyline points="8 6 2 12 8 18" />
-                        </svg>{" "}
-                        {status === 3
-                          ? "Finish"
-                          : status === 4
-                          ? "Approve"
-                          : "Issue"}
-                      </button>
-                    </div>
-                  </div>
-                </summary>
-              </details>
-            ) : (
-              ""
-            )}
+            {token?.role==="ADMIN" && status === 1 ? button_comp : token && status !== 1 && status !== 4? button_comp : ""}
           </section>
         </main>
       </div>
@@ -410,6 +439,16 @@ const FormDetail = () => {
   );
 
   function update_form(tempStatus) {
+    let tempLog = {
+      idReq: req_id.req_id[0],
+      pic: data[0].ACTION_PIC,
+      status: status + 1,
+      action: document.getElementById("action").value,
+      dueDate: selectedDate,
+      remark: document.getElementById("remark").value,
+      img: picture,
+    };
+    // console.log(tempLog);
     if (tempStatus === 1) {
       try {
         axios
@@ -470,6 +509,33 @@ const FormDetail = () => {
                 `Unexpected response status: ${error.response.status}`
               ); // Handle other errors
             }
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    } else if (tempStatus === 3) {
+      try {
+        axios
+          .post(
+            api_service + "/cfrm/4",
+            {
+              idReq: req_id.req_id[0],
+              pic: data[0].ACTION_PIC,
+              status: status + 1,
+              action: document.getElementById("action").value,
+              dueDate: selectedDate,
+              remark: document.getElementById("remark").value,
+              img: picture,
+            },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: token.token,
+              },
+            }
+          )
+          .then(() => {
+            window.location.href = "./form?req_id=" + req_id.req_id[0];
           });
       } catch (err) {
         console.log(err);

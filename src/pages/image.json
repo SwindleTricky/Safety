@@ -1,0 +1,684 @@
+{
+    "_readableState": {
+        "objectMode": false,
+        "highWaterMark": 16384,
+        "buffer": {
+            "head": null,
+            "tail": null,
+            "length": 0
+        },
+        "length": 0,
+        "pipes": [],
+        "flowing": null,
+        "ended": false,
+        "endEmitted": false,
+        "reading": false,
+        "constructed": true,
+        "sync": true,
+        "needReadable": false,
+        "emittedReadable": false,
+        "readableListening": false,
+        "resumeScheduled": false,
+        "errorEmitted": false,
+        "emitClose": true,
+        "autoDestroy": true,
+        "destroyed": false,
+        "errored": null,
+        "closed": false,
+        "closeEmitted": false,
+        "defaultEncoding": "utf8",
+        "awaitDrainWriters": null,
+        "multiAwaitDrain": false,
+        "readingMore": false,
+        "dataEmitted": false,
+        "decoder": null,
+        "encoding": null
+    },
+    "_events": {},
+    "_eventsCount": 1,
+    "_writableState": {
+        "objectMode": false,
+        "highWaterMark": 16384,
+        "finalCalled": false,
+        "needDrain": false,
+        "ending": false,
+        "ended": false,
+        "finished": false,
+        "destroyed": false,
+        "decodeStrings": false,
+        "defaultEncoding": "utf8",
+        "length": 0,
+        "writing": false,
+        "corked": 0,
+        "sync": true,
+        "bufferProcessing": false,
+        "writecb": null,
+        "writelen": 0,
+        "afterWriteTickInfo": null,
+        "buffered": [],
+        "bufferedIndex": 0,
+        "allBuffers": true,
+        "allNoop": true,
+        "pendingcb": 0,
+        "constructed": true,
+        "prefinished": false,
+        "errorEmitted": false,
+        "emitClose": true,
+        "autoDestroy": true,
+        "errored": null,
+        "closed": false,
+        "closeEmitted": false
+    },
+    "allowHalfOpen": true,
+    "offset": 1,
+    "_isActive": false,
+    "_impl": {
+        "_parentObj": {
+            "_parentObj": {
+                "_inProgress": false,
+                "_dbObjectTypes": {},
+                "_requestQueue": []
+            },
+            "metaData": [
+                {
+                    "name": "REQ_ID",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 200,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "EMP_CD",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 20,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "LOCATION_NAME",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 100,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "DETAIL",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 500,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "TYPE",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 200,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "RISK_LEVEL",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 200,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "IMG",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 200,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "IMG_ID",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 200,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "REMARK",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 500,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "CONFIRM",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 100,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "DATE_TIME",
+                    "dbType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 6,
+                    "dbTypeName": "TIMESTAMP",
+                    "fetchType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "STATUS",
+                    "dbType": {
+                        "num": 2010,
+                        "name": "DB_TYPE_NUMBER",
+                        "columnTypeName": "NUMBER",
+                        "_bufferSizeFactor": 22,
+                        "_oraTypeNum": 2,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 38,
+                    "scale": 0,
+                    "dbTypeName": "NUMBER",
+                    "fetchType": {
+                        "num": 2010,
+                        "name": "DB_TYPE_NUMBER",
+                        "columnTypeName": "NUMBER",
+                        "_bufferSizeFactor": 22,
+                        "_oraTypeNum": 2,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "UPDATE_AT",
+                    "dbType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 6,
+                    "dbTypeName": "TIMESTAMP",
+                    "fetchType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "CONFIRM_ID",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 20,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "REMARK_1",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 1000,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "ACTION_PIC",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 50,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "REQ_ID_1",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 100,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "ACTION",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 1000,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "DUE_DATE",
+                    "dbType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 6,
+                    "dbTypeName": "TIMESTAMP",
+                    "fetchType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "STATUS_1",
+                    "dbType": {
+                        "num": 2010,
+                        "name": "DB_TYPE_NUMBER",
+                        "columnTypeName": "NUMBER",
+                        "_bufferSizeFactor": 22,
+                        "_oraTypeNum": 2,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 38,
+                    "scale": 0,
+                    "dbTypeName": "NUMBER",
+                    "fetchType": {
+                        "num": 2010,
+                        "name": "DB_TYPE_NUMBER",
+                        "columnTypeName": "NUMBER",
+                        "_bufferSizeFactor": 22,
+                        "_oraTypeNum": 2,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "DATE_TIME_1",
+                    "dbType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 6,
+                    "dbTypeName": "TIMESTAMP",
+                    "fetchType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "REMARK_DETAIL",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 1000,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "ACTION_PIC_1",
+                    "dbType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "byteSize": 20,
+                    "dbTypeName": "VARCHAR2",
+                    "fetchType": {
+                        "num": 2001,
+                        "name": "DB_TYPE_VARCHAR",
+                        "columnTypeName": "VARCHAR2",
+                        "_bufferSizeFactor": 4,
+                        "_oraTypeNum": 1,
+                        "_csfrm": 1
+                    }
+                },
+                {
+                    "name": "IMG_DETAIL",
+                    "dbType": {
+                        "num": 2019,
+                        "name": "DB_TYPE_BLOB",
+                        "columnTypeName": "BLOB",
+                        "_bufferSizeFactor": 112,
+                        "_oraTypeNum": 113,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "dbTypeName": "BLOB",
+                    "fetchType": {
+                        "num": 2019,
+                        "name": "DB_TYPE_BLOB",
+                        "columnTypeName": "BLOB",
+                        "_bufferSizeFactor": 112,
+                        "_oraTypeNum": 113,
+                        "_csfrm": 0
+                    }
+                },
+                {
+                    "name": "UPDATE_AT_1",
+                    "dbType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    },
+                    "nullable": true,
+                    "isJson": false,
+                    "precision": 6,
+                    "dbTypeName": "TIMESTAMP",
+                    "fetchType": {
+                        "num": 2012,
+                        "name": "DB_TYPE_TIMESTAMP",
+                        "columnTypeName": "TIMESTAMP",
+                        "_bufferSizeFactor": 11,
+                        "_oraTypeNum": 180,
+                        "_csfrm": 0
+                    }
+                }
+            ],
+            "lobIndices": [
+                23
+            ],
+            "dbObjectIndices": [],
+            "nestedCursorIndices": [],
+            "converterIndices": [],
+            "outFormat": 4002,
+            "fetchArraySize": 100,
+            "dbObjectAsPojo": false,
+            "maxRows": 0
+        }
+    },
+    "_chunkSize": 8132,
+    "_pieceSize": 8132,
+    "_length": 2731316,
+    "_type": {
+        "num": 2019,
+        "name": "DB_TYPE_BLOB",
+        "columnTypeName": "BLOB",
+        "_bufferSizeFactor": 112,
+        "_oraTypeNum": 113,
+        "_csfrm": 0
+    },
+    "_autoCloseLob": true
+}
