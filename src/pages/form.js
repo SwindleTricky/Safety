@@ -32,13 +32,18 @@ const FormDetail = () => {
     0: { EMP_CD: "", EMP_NAME: "", SECTION: "" },
   });
   const [image_after, setImage_after] = useState();
-  let req_id = parseURLParams(window.location.href);
+  let req_id;
+  if (window.location.href) {
+    req_id = parseURLParams(window.location.href);
+  } else {
+    req_id = "";
+  }
 
   useEffect(() => {
     async function fetchData() {
       try {
         const apiServiceRes = await axios.post(api_service + "/soveres", {
-          idReq: req_id.req_id[0],
+          idReq: req_id?.req_id[0],
         });
         setData(apiServiceRes.data);
         // console.log("apiservice"+ apiServiceRes.data)
@@ -61,7 +66,19 @@ const FormDetail = () => {
         );
         setImage_after(base64String);
       } catch (err) {
-        console.error("Error fetching data:", err);
+        if (err.response.status === 500) {
+          MySwal.fire({
+            title: "Wrong req ID!",
+            text: "Not have this id anymore",
+            icon: "error",
+            timer: "3000",
+            timerProgressBar: true,
+          }).then((result) => {
+            if (result.isConfirmed || result.dismiss) {
+              window.location.replace("/");
+            }
+          });
+        } 
       } finally {
         // if (
         //   data !== undefined &&
@@ -462,8 +479,8 @@ const FormDetail = () => {
                         {/* <img src={`data:image/png;base64,${image_after}`} alt="after"/> */}
                         <Col>
                           {status >= 4 && status < 6 ? (
-                            <img
-                              style={{ width: "20rem" }}
+                            <Image
+                              style={{ width: "15rem", height: "15rem" }}
                               src={
                                 `data:image/png;base64,${image_after}`
                                   ? `data:image/png;base64,${image_after}`
@@ -471,6 +488,20 @@ const FormDetail = () => {
                               }
                               alt="test_image"
                               rounded="True"
+                              onClick={() => {
+                                Swal.fire({
+                                  imageUrl:
+                                    `data:image/png;base64,${image_after}`
+                                      ? `data:image/png;base64,${image_after}`
+                                      : img_404,
+                                  showConfirmButton: false, // Disable OK button
+                                  showCancelButton: false, // Optionally disable cancel button for a cleaner experience
+                                  backdrop: true, // Enable background click to close
+                                  allowEscapeKey: true, // Allow Escape key to close
+                                  showCloseButton: true,
+                                  background: "",
+                                });
+                              }}
                             />
                           ) : (
                             ""
@@ -563,7 +594,7 @@ const FormDetail = () => {
           .post(
             api_service + "/cfrm/2",
             {
-              id: req_id.req_id[0],
+              idReq: req_id.req_id[0],
               remark_reject: remark,
               status: tempStatus,
               cfrm_id: token.id,
