@@ -75,6 +75,42 @@ a:link {text-decoration: none; }
   text-align: center;
 }
 
+.status-issue {
+  color: #fff700 !important;
+  background-color: rgb(25, 99, 56);
+  border-radius: 5px;
+  padding: 5px;
+}
+.status-approve{
+  color: #01cdfe !important;
+  background-color: rgb(25, 99, 56);
+  border-radius: 5px;
+  padding: 5px;
+}
+.status-confirm{
+  color: #00d49f !important;
+  background-color: rgb(25, 99, 56);
+  border-radius: 5px;
+  padding: 5px;
+}
+.status-finish{
+  color: #05ffa1 !important;
+  background-color: rgb(25, 99, 56);
+  border-radius: 5px;
+  padding: 5px;
+}
+.status-fapprove{
+  color: #02f196 !important;
+  background-color: rgb(25, 99, 56);
+  border-radius: 5px;
+  padding: 5px;
+}
+.status-reject{
+  color: #e2e2e2 !important;
+  background-color: rgb(243, 47, 47);
+  border-radius: 5px;
+  padding: 5px;
+}
 
 
 @keyframes App-logo-spin {

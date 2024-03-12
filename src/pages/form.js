@@ -5,9 +5,11 @@ import ModalImage from "react-modal-image";
 import axios from "axios";
 import Select from "react-dropdown-select";
 import "../css/pbar.css";
-import { Col, Form, FormLabel, FormControl } from "react-bootstrap";
+import { Col, Form, FormLabel, FormControl, Image } from "react-bootstrap";
 import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
+import Resizer from "react-image-file-resizer";
+import img_404 from "../images/404_img.png";
 
 const FormDetail = () => {
   const api_service = process.env.REACT_APP_API_SERVICE;
@@ -35,7 +37,7 @@ const FormDetail = () => {
   useEffect(() => {
     async function fetchData() {
       try {
-        const apiServiceRes = await axios.post(api_service + "/sovereqid", {
+        const apiServiceRes = await axios.post(api_service + "/soveres", {
           idReq: req_id.req_id[0],
         });
         setData(apiServiceRes.data);
@@ -48,21 +50,26 @@ const FormDetail = () => {
         ]);
         setEmp(empInfoRes.data);
         setPICFullName(picInfoRes.data);
-        // const file = new Blob(
-        //   [new Uint8Array(apiServiceRes.data[0].IMG_DETAIL)],
-        //   {
-        //     type: "image/jpeg",
-        //   }
-        // );
-        
-        // setImage_after(URL.createObjectURL(file));
-        // console.log(URL.createObjectURL(file));
 
         const picListRes = await axios.get(api_service + "/ul");
+
         setPicList(picListRes.data);
+        const base64String = btoa(
+          String.fromCharCode(
+            ...new Uint8Array(apiServiceRes.data[0].IMG_DETAIL.data)
+          )
+        );
+        setImage_after(base64String);
       } catch (err) {
         console.error("Error fetching data:", err);
       } finally {
+        // if (
+        //   data !== undefined &&
+        //   empData !== undefined &&
+        //   pICFullName !== undefined
+        // ) {
+
+        // }
         setLoad(true);
         setLoadEmp(true);
         setLoadPic(true);
@@ -75,21 +82,20 @@ const FormDetail = () => {
     console.log("LOADING..");
     return <div>Load.... . .. . . </div>;
   }
-
-
   let empDetail = "";
   if (LoadEmp) {
-    empDetail = empData[0].EMP_NAME;
+    empDetail = empData[0]?.EMP_NAME ? empData[0]?.EMP_NAME : "";
   }
 
-  let imgID = parseURLParams(data[0].IMG);
-  let imgURL = "https://lh3.google.com/u/0/d/" + imgID.id;
-  let imgURL_small = "https://drive.google.com/thumbnail?id=" + imgID.id;
-  // let imgURL_test = "https://drive.usercontent.google.com/download?id=" + imgID.id;
+  let imgID = "";
+  let imgURL = "";
+  if (data[0].IMG) {
+    imgID = parseURLParams(data[0].IMG);
+    imgURL = "https://lh3.google.com/u/0/d/" + imgID.id;
+  }
   let status = parseInt(data[0].STATUS);
 
   let options = [];
-
   if (status === 1 && LoadPic) {
     options = picList.map((e, i) => ({
       value: i,
@@ -106,9 +112,24 @@ const FormDetail = () => {
       console.log(err);
     }
   };
-  const handleFileChange = (event) => {
-    console.log(event.target.size)
-    setPicture(event.target.files[0]);
+  const resizeFile = (file) =>
+    new Promise((resolve) => {
+      Resizer.imageFileResizer(
+        file,
+        300,
+        300,
+        "JPEG",
+        100,
+        0,
+        (uri) => {
+          resolve(uri);
+        },
+        "blob"
+      );
+    });
+  const handleFileChange = async (event) => {
+    console.log(event.target.size);
+    setPicture(await resizeFile(event.target.files[0]));
   };
 
   const handleDateChange = (event) => {
@@ -168,19 +189,28 @@ const FormDetail = () => {
       </div>
     </div>
   );
-  let status1_label = token?.role === "ADMIN" ? (
-    <div className="nice-form-group">
-      <label id="guideForm">Selection PIC :</label>
-      <Select
-        onChange={handleChange}
-        placeholder="Select PIC"
-        style={{ width: "50%" }}
-        options={options}
-      />
+
+  let reject_bar = (
+    <div className="d-flex align-items-center justify-content-center">
+      <label className="reject-card">REJECT</label>
     </div>
-  ) : (
-    ""
   );
+
+  let status1_label =
+    token?.role === "ADMIN" ? (
+      <div className="nice-form-group">
+        <label id="guideForm">Selection PIC :</label>
+        <Select
+          id={"selected_pic"}
+          onChange={handleChange}
+          placeholder="Select PIC"
+          style={{ width: "50%" }}
+          options={options}
+        />
+      </div>
+    ) : (
+      ""
+    );
 
   let status2_label = (
     <>
@@ -216,7 +246,7 @@ const FormDetail = () => {
 
       <div className="row">
         <div className="col-6 mt-3">
-          {status > 2 ? (
+          {status > 2 && status < 6 ? (
             <>
               <Form.Group controlId="date_picker">
                 <FormLabel>Due date:</FormLabel>
@@ -255,31 +285,43 @@ const FormDetail = () => {
   let showLabel = "";
   if (status === 1) {
     showLabel = status1_label;
-  } else if (status >= 2 && token) {
+  } else if (status >= 2 && status < 6 && token) {
     showLabel = status2_label;
   }
 
-  let button_comp = ((
+  let button_comp = (
     <details>
       <summary>
         <div className="row">
           <div className="col-6 d-flex align-items-start justify-content-start">
-            {/* {status === 3 ? (
+            {status === 1 ? (
               <button
-                className="btn btn-success"
-                onClick={() => update_form(status)}
+                className="btn btn-danger"
+                onClick={() =>
+                  MySwal.fire({
+                    title: "Please input reason for reject",
+                    inputAttributes: {
+                      autocapitalize: "off",
+                    },
+                    input: "text",
+                    showCancelButton: true,
+                    preConfirm: async (remark_reject) => {
+                      update_form(6, remark_reject);
+                    },
+                  })
+                }
               >
                 {" "}
-                Save
+                Reject
               </button>
             ) : (
               ""
-            )} */}
+            )}
           </div>
           <div className="col-6 d-flex align-items-end justify-content-end">
             <button
               className="btn btn-success"
-              onClick={() => update_form(status)}
+              onClick={() => update_form(status, 0)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -296,17 +338,13 @@ const FormDetail = () => {
                 <polyline points="16 18 22 12 16 6" />
                 <polyline points="8 6 2 12 8 18" />
               </svg>{" "}
-              {status === 3
-                ? "Finish"
-                : status === 4
-                ? "Approve"
-                : "Issue"}
+              {status === 3 ? "Finish" : status === 4 ? "Approve" : "Issue"}
             </button>
           </div>
         </div>
       </summary>
     </details>
-  ))
+  );
 
   return (
     <div className="container">
@@ -317,7 +355,7 @@ const FormDetail = () => {
               <img src={slogan} alt="slogan_m" style={{ width: "10rem" }} />
             </div>
             <div className="href-target" id="structure"></div>
-            {progress_bar}
+            {status === 6 ? reject_bar : progress_bar}
 
             <h1>
               <svg
@@ -357,7 +395,8 @@ const FormDetail = () => {
               <div className="nice-form-group">
                 <label id="requistorForm">Requestor : </label>
                 <small>
-                  {data ? data[0].EMP_CD : "Undefinded"} {empDetail? empDetail : ""}
+                  {data[0].EMP_CD ? data[0].EMP_CD : "Undefinded"}{" "}
+                  {empDetail ? empDetail : ""}
                 </small>
               </div>
               <div className="nice-form-group">
@@ -374,7 +413,7 @@ const FormDetail = () => {
               </div>
               <div className="nice-form-group">
                 <label id="guideForm">Suggestion :</label>
-                <small>{data ? data[0].REMARK : "Undefinded"}</small>
+                <small>{data ? data[0]?.REMARK : "Undefinded"}</small>
               </div>
               {showLabel}
               {/* {status1_label}
@@ -388,88 +427,175 @@ const FormDetail = () => {
                         <label id="rankForm">Image of risk : </label>
                       </th>
                       <th>
-                        {/* <label id="rankForm">Image after : </label> */}
+                        {status >= 4 && status < 6 ? (
+                          <label id="rankForm">Image after : </label>
+                        ) : (
+                          ""
+                        )}
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr>
                       <td className="pe-5">
-                        {/* <Col>
-                          <img
-                            crossOrigin="anonymous"
-                            style={{ width: "20rem" }}
-                            src={imgURL_test}
+                        <Col>
+                          <Image
+                            style={{ width: "15rem", height: "15rem" }}
+                            src={imgURL ? imgURL : img_404}
                             alt="test_image"
                             rounded="True"
+                            onClick={() => {
+                              Swal.fire({
+                                imageUrl: imgURL ? imgURL : img_404,
+                                showConfirmButton: false, // Disable OK button
+                                showCancelButton: false, // Optionally disable cancel button for a cleaner experience
+                                backdrop: true, // Enable background click to close
+                                allowEscapeKey: true, // Allow Escape key to close
+                                showCloseButton: true,
+                                background: "",
+                              });
+                            }}
                           />
-                        </Col> */}
-                        <ModalImage
-                          crossOrigin="anonymous"
-                          className="className"
-                          style={{ width: "10rem" }}
-                          small={imgURL_small}
-                          large={imgURL}
-                        />
+                        </Col>
                       </td>
                       <td>
-                        <ModalImage
+                        {/* <img src={`data:image/png;base64,${image_after}`} alt="after"/> */}
+                        <Col>
+                          {status >= 4 && status < 6 ? (
+                            <img
+                              style={{ width: "20rem" }}
+                              src={
+                                `data:image/png;base64,${image_after}`
+                                  ? `data:image/png;base64,${image_after}`
+                                  : img_404
+                              }
+                              alt="test_image"
+                              rounded="True"
+                            />
+                          ) : (
+                            ""
+                          )}
+                        </Col>
+                        {/* <ModalImage
                           crossOrigin="anonymous"
                           className="className"
                           style={{ width: "10rem" }}
-                          small={image_after}
+                          small={`data:image/png;base64,${image_after}`}
                           large={imgURL}
-                        />
+                        /> */}
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-
-              {/* <img src="https://drive.google.com/thumbnail?id=1SXTwEz4_yVzVgnCII4KuHkA0VtHHga8g" /> */}
             </div>
             {/* Other form groups go here */}
 
             {/* Button */}
-            {token?.role==="ADMIN" && status === 1 ? button_comp : token && status !== 1 && status !== 4? button_comp : ""}
+            {token?.role === "ADMIN" && (status === 1 || status === 4)
+              ? button_comp
+              : token &&
+                status !== 1 &&
+                status !== 4 &&
+                status !== 5 &&
+                status !== 6
+              ? button_comp
+              : ""}
           </section>
         </main>
       </div>
     </div>
   );
 
-  function update_form(tempStatus) {
-    let tempLog = {
-      idReq: req_id.req_id[0],
-      pic: data[0].ACTION_PIC,
-      status: status + 1,
-      action: document.getElementById("action").value,
-      dueDate: selectedDate,
-      remark: document.getElementById("remark").value,
-      img: picture,
-    };
-    // console.log(tempLog);
+  async function update_form(tempStatus, remark) {
     if (tempStatus === 1) {
+      if (picName) {
+        try {
+          axios
+            .post(
+              api_service + "/cfrm/2",
+              {
+                idReq: req_id.req_id[0],
+                pic: picName,
+                status: status + 1,
+              },
+              {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: token.token,
+                },
+              }
+            )
+            .then(() => {
+              window.location.reload();
+            })
+            .catch(function (error) {
+              if (error.response.status === 401) {
+                const message = "Unauthorized: Please log in."; // Extract error message if available
+                MySwal.fire({
+                  title: "Authentication Error: 401",
+                  text: message,
+                  icon: "error",
+                }).then(() => {
+                  localStorage.clear();
+                  window.location.replace("/login"); // Redirect to login page on confirmation
+                });
+              } else {
+                console.error(
+                  `Unexpected response status: ${error.response.status}`
+                ); // Handle other errors
+              }
+            });
+        } catch (err) {
+          console.log(err);
+        }
+      } else {
+        MySwal.fire({
+          title: "PIC",
+          text: "Please select PIC",
+          icon: "error",
+        });
+      }
+    } else if (tempStatus === 6) {
       try {
+        // console.log(remarkReject);
         axios
           .post(
             api_service + "/cfrm/2",
             {
               id: req_id.req_id[0],
-              pic: picName,
-              status: status + 1,
+              remark_reject: remark,
+              status: tempStatus,
+              cfrm_id: token.id,
             },
             {
               headers: {
-                "Content-Type": "application/json",
+                Authorization: token.token,
               },
             }
           )
-          .then((res) => {
-            window.location.href = "./form?req_id=" + req_id.req_id[0];
+          .then(() => {
+            window.location.reload();
+          })
+          .catch(function (error) {
+            if (error.response.status === 401) {
+              const message = "Unauthorized: Please log in."; // Extract error message if available
+              MySwal.fire({
+                title: "Authentication Error: 401",
+                text: message,
+                icon: "error",
+              }).then(() => {
+                localStorage.clear();
+                window.location.replace("/login"); // Redirect to login page on confirmation
+              });
+            } else {
+              console.error(
+                `Unexpected response status: ${error.response.status}`
+              ); // Handle other errors
+            }
           });
-      } catch (err) {
-        console.log(err);
+      } catch (error) {
+        console.error(`Unexpected response status: ${error.response.status}`); // Handle other errors
       }
     } else if (tempStatus === 2) {
       try {
@@ -491,7 +617,7 @@ const FormDetail = () => {
             }
           )
           .then(() => {
-            window.location.href = "./form?req_id=" + req_id.req_id[0];
+            window.location.reload();
           })
           .catch(function (error) {
             if (error.response.status === 401) {
@@ -535,7 +661,65 @@ const FormDetail = () => {
             }
           )
           .then(() => {
-            window.location.href = "./form?req_id=" + req_id.req_id[0];
+            window.location.reload();
+          })
+          .catch(function (error) {
+            if (error.response.status === 401) {
+              const message = "Unauthorized: Please log in."; // Extract error message if available
+              MySwal.fire({
+                title: "Authentication Error: 401",
+                text: message,
+                icon: "error",
+              }).then(() => {
+                localStorage.clear();
+                window.location.replace("/login"); // Redirect to login page on confirmation
+              });
+            } else {
+              console.error(
+                `Unexpected response status: ${error.response.status}`
+              ); // Handle other errors
+            }
+          });
+      } catch (err) {
+        console.log(err);
+      }
+    } else if (tempStatus === 4) {
+      try {
+        axios
+          .post(
+            api_service + "/cfrm/5",
+            {
+              idReq: req_id.req_id[0],
+              pic: data[0].ACTION_PIC,
+              status: status + 1,
+              cfrm_id: token.id,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: token.token,
+              },
+            }
+          )
+          .then(() => {
+            window.location.reload();
+          })
+          .catch(function (error) {
+            if (error.response.status === 401) {
+              const message = "Unauthorized: Please log in."; // Extract error message if available
+              MySwal.fire({
+                title: "Authentication Error: 401",
+                text: message,
+                icon: "error",
+              }).then(() => {
+                localStorage.clear();
+                window.location.replace("/login"); // Redirect to login page on confirmation
+              });
+            } else {
+              console.error(
+                `Unexpected response status: ${error.response.status}`
+              ); // Handle other errors
+            }
           });
       } catch (err) {
         console.log(err);

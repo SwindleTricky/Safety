@@ -77,3 +77,13 @@
   .step-name{
     color: black;
   }
+
+  .reject-card{
+    color: #f10202 !important;
+    /* background-color: rgb(0, 255, 106); */
+    border: 2px solid red;
+    padding: 5px;
+    font-size: 1.5em;
+    font-weight: bold;
+    text-shadow: 0px 2px 5px rgba(0, 0, 0, 0.3);
+  }

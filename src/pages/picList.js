@@ -4,12 +4,15 @@ import Form from "react-bootstrap/Form";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import Swal from "sweetalert2";
+import withReactContent from "sweetalert2-react-content";
 
 const PicList = () => {
   const token = JSON.parse(localStorage.getItem("token"));
   if (!token) {
     window.location.replace("/");
   }
+  const MySwal = withReactContent(Swal);
   const api_service = process.env.REACT_APP_API_SERVICE;
   const [dataPic, setDataPic] = useState();
   const [loaded, setLoaded] = useState(false);
@@ -19,31 +22,46 @@ const PicList = () => {
   useEffect(() => {
     async function fetchdata() {
       try {
-        const getList = await axios.post(
-          api_service + "/piclist",
-          {
-            id: token.id,
-          },
-          {
-            headers: {
-              Authorization: token.token,
+        const getList = await axios
+          .post(
+            api_service + "/piclist",
+            {
+              id: token.id,
             },
-          }
-        );
+            {
+              headers: {
+                Authorization: token.token,
+              },
+            }
+          )
+          .catch((error) => {
+            console.log(error.response);
+            MySwal.fire({
+              title: "ERROR " + error.response.status,
+              text:
+                error.response.status === 401
+                  ? "Session expired"
+                  : error.response.statusText,
+              icon: "error",
+            }).then((result) => {
+              if (result.isConfirmed || result.dismiss) {
+                localStorage.clear();
+                window.location.replace("/login");
+              }
+            });
+          });
         setDataPic(getList.data);
+        setLoaded(true);
       } catch (err) {
         console.error("Error fetching data:", err);
-      } finally {
-        setLoaded(true);
       }
     }
     fetchdata();
   }, [api_service]);
   if (!loaded) {
-    return <div>return. ...</div>;
+    return <div>load. ...</div>;
   }
-  console.log(dataPic);
-  //   console.log(dataPic);
+
   const countByStatus = {
     1: 0, // Issue
     2: 0, // Approve
@@ -61,16 +79,16 @@ const PicList = () => {
   const picConfirm = countByStatus[3];
   const finish = countByStatus[4];
   const finalApprove = countByStatus[5];
-  const reject = countByStatus[6];
+  // const reject = countByStatus[6];
 
   dataPic.map((e) => {
     let imgURL =
       "https://drive.google.com/thumbnail?id=" +
-      parseURLParams(dataPic[0].IMG).id;
+      parseURLParams(e.IMG).id;
     cardComp.push(
       <>
-        <Link to={"../form?req_id=" + dataPic[0].REQ_ID}>
-          <div className="card mt-2 card-custom" key={dataPic[e.REQ_ID]}>
+        <Link to={"../form?req_id=" + e.REQ_ID}>
+          <div className="card mt-2 card-custom" key={e.REQ_ID}>
             <div
               className="card-body card-body-custom"
               style={{ color: "white" }}
@@ -91,38 +109,38 @@ const PicList = () => {
                     </td>
                     <td className="tg-0lax">
                       <font color="#1d6167">
-                        <h4>{dataPic[0].LOCATION_NAME}</h4>
+                        <h4>{e.LOCATION_NAME}</h4>
                       </font>
                     </td>
                   </tr>
                   <tr>
                     <td className="tg-0lax">
                       <font color="#1d817e">
-                        <h6>Detail: {dataPic[0].DETAIL}</h6>
+                        <h6>Detail: {e.DETAIL}</h6>
                       </font>
                       <font color="#1d817e">
-                        <h6>Type: {dataPic[0].TYPE}</h6>
+                        <h6>Type: {e.TYPE}</h6>
                       </font>
                       <font color="#1d817e">
-                        <h6>Risk level: {dataPic[0].RISK_LEVEL}</h6>
+                        <h6>Risk level: {e.RISK_LEVEL}</h6>
                       </font>
                       <font color="#1d817e">
-                        <h6>requestor: {dataPic[0].EMP_CD}</h6>
+                        <h6>requestor: {e.EMP_CD}</h6>
                       </font>
                       <font color="#1d817e">
                         <h6>
                           status:{" "}
-                          {dataPic[0].STATUS === 1
+                          {e.STATUS === 1
                             ? "Issued"
-                            : dataPic[0].STATUS === 2
+                            : e.STATUS === 2
                             ? "Approved"
-                            : dataPic[0].STATUS === 3
+                            : e.STATUS === 3
                             ? "PIC Confirm"
-                            : dataPic[0].STATUS === 4
+                            : e.STATUS === 4
                             ? "Finish"
-                            : dataPic[0].STATUS === 5
+                            : e.STATUS === 5
                             ? "Final approve"
-                            : dataPic[0].STATUS === 6
+                            : e.STATUS === 6
                             ? "Reject"
                             : "Unknown data"}
                         </h6>
@@ -153,7 +171,7 @@ const PicList = () => {
                 <p>PIC confirm: {picConfirm}</p>
                 <p>Finish: {finish}</p>
                 <p>Final Approve: {finalApprove}</p>
-                <p>Reject: {reject}</p>
+                {/* <p>Reject: {reject}</p> */}
               </div>
             </div>
           </div>
@@ -187,8 +205,8 @@ const PicList = () => {
                   </div>
                 </div>
               </div>
-              {cardComp}
             </div>
+            {cardComp}
           </div>
         </div>
       </div>

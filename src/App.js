@@ -1,32 +1,68 @@
 import "./App.css";
+import "./index.css";
 import { Col, Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import pe_image from "./images/PE.png";
+import img_404 from "./images/404_img.png";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "react-bootstrap/Pagination";
 import { Link } from "react-router-dom";
+import withReactContent from "sweetalert2-react-content";
+import Swal from "sweetalert2";
 
 function App() {
+  let urlParm = parseURLParams(window.location.href);
+  const token = JSON.parse(localStorage.getItem("token"));
   const api_service = process.env.REACT_APP_API_SERVICE;
-
   const [data, setData] = useState();
   const [data_length, setData_length] = useState(null);
   const [Load, setLoad] = useState(true);
+  const [inputsearch, setInputSearch] = useState("");
+  const MySwal = withReactContent(Swal);
   useEffect(() => {
     async function fetchdata() {
       try {
-        // await axios.get("http://localhost:300/svoe_list").then((response) => {
-        await axios.get(api_service + "/sovereq").then((response) => {
-          // console.log(response.data);
-          setData(response.data);
-          setData_length(response.data.length);
-
-          // console.log(response.data.length)
-        });
+        if (urlParm?.uid) {
+          await axios
+            .post(
+              api_service + "/piclist",
+              {
+                id: urlParm.uid[0],
+              },
+              {
+                headers: {
+                  Authorization: token.token,
+                },
+              }
+            )
+            .catch((error) => {
+              MySwal.fire({
+                title: "ERROR " + error.response.status,
+                text:
+                  error.response.status === 401
+                    ? "Session expired"
+                    : error.response.statusText,
+                icon: "error",
+              }).then((result) => {
+                if (result.isConfirmed || result.dismiss) {
+                  localStorage.clear();
+                  window.location.href("/");
+                }
+              });
+            })
+            .then((res) => {
+              setData(res.data);
+              setData_length(res.data.length);
+            });
+        } else {
+          await axios.get(api_service + "/sovereq").then((response) => {
+            setData(response.data);
+            setData_length(response.data.length);
+          });
+        }
       } catch (err) {
         console.log(err);
-        // throw err;
       }
     }
     fetchdata();
@@ -42,14 +78,14 @@ function App() {
     return <div>Load.... . .. . . </div>;
   }
   // let data_svoe = data.svoe
-  var page = parseURLParams(window.location.href);
-  if (page) {
+  let page;
+  
+  if (urlParm?.page) {
     // console.log(page.page[0]);
-    page = page.page[0];
+    page = urlParm?.page[0];
   } else {
     page = 1;
   }
-  // console.log(page);
 
   let active = parseInt(page);
   let items = [];
@@ -67,28 +103,6 @@ function App() {
   let dataPerPage = [];
   let imgID;
   let imgURL;
-
-  // let issue = 0,
-  //   approve = 0,
-  //   picConfirm = 0,
-  //   finish = 0,
-  //   finalApprove = 0,
-  //   reject = 0;
-  // data.map((e) => {
-  //   if (e.STATUS === 1) {
-  //     issue += 1;
-  //   } else if (e.STATUS === 2) {
-  //     approve += 1;
-  //   } else if (e.STATUS === 3) {
-  //     picConfirm += 1;
-  //   } else if (e.STATUS === 4) {
-  //     finish += 1;
-  //   } else if (e.STATUS === 5) {
-  //     finalApprove += 1;
-  //   } else if (e.STATUS === 6) {
-  //     reject += 1;
-  //   }
-  // });
 
   const countByStatus = {
     1: 0, // Issue
@@ -108,14 +122,20 @@ function App() {
   const picConfirm = countByStatus[3];
   const finish = countByStatus[4];
   const finalApprove = countByStatus[5];
-  const reject = countByStatus[6];
+  // const reject = countByStatus[6];
+
+  let searchHandler = (e) => {
+    //convert input text to lower case
+    var lowerCase = e.target.value.toLowerCase();
+    console.log(lowerCase);
+    setInputSearch(lowerCase);
+  };
 
   for (let i = stPage; i < allPage; i++) {
     if (i < data_length) {
       if (data[i].IMG) {
         imgID = parseURLParams(data[i].IMG);
         imgURL = "https://drive.google.com/thumbnail?id=" + imgID.id;
-        // imgURL = "https://drive.google.com/uc?export=view&id="+imgID.id
       }
       dataPerPage.push(
         <Link to={"./form?req_id=" + data[i].REQ_ID}>
@@ -124,62 +144,65 @@ function App() {
               className="card-body card-body-custom"
               style={{ color: "white" }}
             >
-              <table className="tg">
-                <thead>
-                  <tr>
-                    <td className="tg-baqh" rowSpan="2" width="25%">
-                      <Col>
-                        <img
-                          style={{ width: "10rem" }}
-                          // src={data[i].IMG ? data[i].IMG : pe_image}
-                          src={imgURL ? imgURL : pe_image}
-                          alt="test_image"
-                          rounded="True"
-                        />
-                      </Col>
-                    </td>
-                    <td className="tg-0lax">
-                      <font color="#1d6167">
-                        <h4>{data[i].LOCATION_NAME}</h4>
-                      </font>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td className="tg-0lax">
-                      <font color="#1d817e">
-                        <h6>Detail: {data[i].DETAIL}</h6>
-                      </font>
-                      <font color="#1d817e">
-                        <h6>Type: {data[i].TYPE}</h6>
-                      </font>
-                      <font color="#1d817e">
-                        <h6>Risk level: {data[i].RISK_LEVEL}</h6>
-                      </font>
-                      <font color="#1d817e">
-                        <h6>requestor: {data[i].EMP_CD}</h6>
-                      </font>
-                      <font color="#1d817e">
-                        <h6>
-                          status:{" "}
-                          {data[i].STATUS === 1
-                            ? "Issued"
+              <div className="row">
+                <div className="col-3 d-flex align-items-center justify-content-center">
+                  <img
+                    src={imgURL ? imgURL : img_404}
+                    alt="pe"
+                    style={{ width: "10rem", height: "10rem" }}
+                  />
+                </div>
+                <div className="col-9">
+                  <div className="row">
+                    <div className="col-6">
+                      <h4>{data[i].LOCATION_NAME}</h4>
+                    </div>
+                    <div className="col-6 d-flex align-items-end justify-content-end"></div>
+                  </div>
+                  <div className="nice-form-group">
+                    <label id="timeForm">Detail: {data[i].DETAIL}</label>
+                    <label id="timeForm">Type: {data[i].TYPE}</label>
+                    <label id="timeForm">
+                      Risk level: {data[i].RISK_LEVEL}
+                    </label>
+                    <label id="timeForm">requestor: {data[i].EMP_CD}</label>
+                    <div className="d-flex align-items-end justify-content-end">
+                      <label
+                        className={`status-${
+                          data[i].STATUS === 1
+                            ? "issue"
                             : data[i].STATUS === 2
-                            ? "Approved"
+                            ? "approve"
                             : data[i].STATUS === 3
-                            ? "PIC Confirm"
+                            ? "confirm"
                             : data[i].STATUS === 4
-                            ? "Finish"
+                            ? "finish"
                             : data[i].STATUS === 5
-                            ? "Final approve"
+                            ? "fapprove"
                             : data[i].STATUS === 6
-                            ? "Reject"
-                            : "Unknown data"}
-                        </h6>
-                      </font>
-                    </td>
-                  </tr>
-                </thead>
-              </table>
+                            ? "reject"
+                            : "Unknown data"
+                        }`}
+                        id="timeForm"
+                      >
+                        {data[i].STATUS === 1
+                          ? "Issued"
+                          : data[i].STATUS === 2
+                          ? "Approved"
+                          : data[i].STATUS === 3
+                          ? "PIC Confirm"
+                          : data[i].STATUS === 4
+                          ? "Finish"
+                          : data[i].STATUS === 5
+                          ? "Final approve"
+                          : data[i].STATUS === 6
+                          ? "Reject"
+                          : "Unknown data"}
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </Link>
@@ -204,12 +227,18 @@ function App() {
                 style={{ color: "white" }}
                 className="card-body card-body-custom"
               >
-                <p>Issue: {issue}</p>
+                <p
+                  onClick={() => {
+                    window.location.replace("?issue");
+                  }}
+                >
+                  Issue: {issue}
+                </p>
                 <p>Approve: {approve}</p>
                 <p>PIC confirm: {picConfirm}</p>
                 <p>Finish: {finish}</p>
                 <p>Final Approve: {finalApprove}</p>
-                <p>Reject: {reject}</p>
+                {/* <p>Reject: {reject}</p> */}
               </div>
             </div>
           </div>
@@ -227,6 +256,7 @@ function App() {
                           className="input-custom"
                           type="email"
                           placeholder="Input keyword for search"
+                          onChange={searchHandler}
                         />
                       </Form.Group>
                     </div>

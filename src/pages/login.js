@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
 
 function Login() {
+  const navigate = useNavigate();
   if (localStorage.getItem("token")) {
     window.location.replace("/");
   }
@@ -39,9 +41,12 @@ function Login() {
               title: "Successfully!",
               text: "Loged in",
               icon: "success",
+              timer: "1500",
+              timerProgressBar: true
             }).then((result) => {
               if (result.isConfirmed || result.dismiss) {
-                window.location.replace("/");
+                // window.location.replace("/");
+                navigate(-1)
               }
             });
           }
@@ -85,7 +90,7 @@ function Login() {
                       className="form-control"
                       type="text"
                       maxlength="5"
-                      placeholder="Employee code 5 digit"
+                      placeholder="รหัสพนักงาน 5 หลัก"
                       value={formData.name}
                       onChange={handleChange}
                     ></input>
@@ -100,7 +105,7 @@ function Login() {
                         name="password"
                         type="password"
                         className="form-control"
-                        placeholder="mt400+Employee code"
+                        placeholder="ปีคศ เดือน วันเกิด เช่น 19990414"
                         value={formData.name}
                         onChange={handleChange}
                       ></input>

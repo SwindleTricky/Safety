@@ -10,6 +10,7 @@ import Login from "./pages/login";
 import FormDetail from "./pages/form";
 import PicList from "./pages/picList";
 import Testimage from "./pages/test_image";
+import Newcard from "./pages/new_card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'sweetalert2/dist/sweetalert2.all.min.js'
 
@@ -35,6 +36,7 @@ root.render(
         <Route path="/form" element={<FormDetail />} />
         <Route path="/piclist" element={<PicList />} />
         <Route path="/Test_image" element={<Testimage />} />
+        <Route path="/Newcard" element={<Newcard />} />
       </Routes>
     </BrowserRouter>
   </React.StrictMode>
