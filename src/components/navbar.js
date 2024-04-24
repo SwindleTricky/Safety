@@ -6,18 +6,32 @@ import "../index.css";
 import React, { useEffect, useState } from "react";
 
 function Navbarcomp() {
-  const [isLogin, setIsLogin] = useState();
+  const [account, setAccount] = useState();
   const logOut = () => {
     localStorage.clear();
     window.location.reload();
-  }
-  useEffect(()=>{
-    let account;
-    if (localStorage.getItem("token") !== null) {
-    console.log("have token");
-    account = JSON.parse(localStorage.getItem("token"));
+  };
+  const urlParams = new URLSearchParams(window.location.search);
+  const cap = urlParams.get("cap") ? urlParams.get("cap") : 0;
+  useEffect(() => {
+    async function getToken() {
+      console.log("useEffect");
+      const token = localStorage.getItem("token");
+      if (token !== null) {
+        console.log("have token");
+        setAccount(JSON.parse(localStorage.getItem("token")));
+      } else {
+        console.log("don't have token");
+      }
+    }
+    getToken();
+  }, []);
+
+  // console.log(isLogin)
+  let isLogin;
+  if (account !== undefined) {
     const name = account.name.split(" ");
-    setIsLogin(
+    isLogin = (
       <NavDropdown title={`Hello, ${name[0]}`} id="navbarScrollingDropdown">
         <NavDropdown.Item href={`/?uid=${account.id}`}>
           My Task
@@ -27,27 +41,35 @@ function Navbarcomp() {
       </NavDropdown>
     );
   } else {
-    console.log("don't have token");
-    setIsLogin(<Nav.Link href="/login">Log in</Nav.Link>)
+    isLogin = (
+      <Nav.Link
+        onClick={() => {
+          localStorage.setItem("prev", window.location.href);
+          window.location.replace("/login");
+        }}
+      >
+        Log in
+      </Nav.Link>
+    );
   }
-  },[window.location.href])
-  
-  // console.log(isLogin)
-
   return (
     <>
-      <Navbar className="Nav-color" bg="light" data-bs-theme="light">
-        <Container>
-          <Navbar.Brand href="/" style={{ color: "#337a2c" }}>
-            SVOE
-          </Navbar.Brand>
-          <Nav className="me-auto">
-            <Nav.Link href="/">Home</Nav.Link>
-            <Nav.Link href="/">Detail</Nav.Link>
-          </Nav>
-          <Nav>{isLogin}</Nav>
-        </Container>
-      </Navbar>
+      {parseInt(cap) === 1 ? (
+        ""
+      ) : (
+        <Navbar className="Nav-color" bg="light" data-bs-theme="light">
+          <Container>
+            <Navbar.Brand href="/" style={{ color: "#337a2c" }}>
+              SVOE
+            </Navbar.Brand>
+            <Nav className="me-auto">
+              <Nav.Link href="/">Home</Nav.Link>
+              <Nav.Link href="/">Detail</Nav.Link>
+            </Nav>
+            <Nav>{isLogin}</Nav>
+          </Container>
+        </Navbar>
+      )}
     </>
   );
 }

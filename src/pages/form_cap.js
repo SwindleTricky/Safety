@@ -9,9 +9,8 @@ import withReactContent from "sweetalert2-react-content";
 import Swal from "sweetalert2";
 import Resizer from "react-image-file-resizer";
 import img_404 from "../images/404_img.png";
-import { riskMode } from "../function/riskMode";
 
-const FormDetail = () => {
+const FormCap = () => {
   const api_service = process.env.REACT_APP_API_SERVICE;
   const api_emp = process.env.REACT_APP_400_API;
   let token;
@@ -24,6 +23,7 @@ const FormDetail = () => {
   const [Load, setLoad] = useState(false);
   const [LoadEmp, setLoadEmp] = useState(false);
   const [LoadPic, setLoadPic] = useState(false);
+  const MySwal = withReactContent(Swal);
   const [picture, setPicture] = useState();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [picList, setPicList] = useState();
@@ -31,29 +31,6 @@ const FormDetail = () => {
     0: { EMP_CD: "", EMP_NAME: "", SECTION: "" },
   });
   const [image_after, setImage_after] = useState();
-  const [inpDetail, setInpDetail] = useState();
-  const [checkedValues, setCheckedValues] = useState([]);
-  const [findedOther, setFindedOther] = useState([]);
-  const [initRisk, setInitRisk] = useState([]);
-  const [atwork, setAtwork] = useState(0);
-
-  const CHECKBOX_OPTIONS = [
-    { value: "หนีบ", label: "หนีบ" },
-    { value: "กระเด็น", label: "กระเด็น" },
-    { value: "กระแทก", label: "กระแทก" },
-    { value: "ความร้อน", label: "ความร้อน" },
-    { value: "ตัด/บาด", label: "ตัด/บาด" },
-    { value: "ลื่น/ล้ม", label: "ลื่น/ล้ม" },
-    { value: "ไฟไหม้", label: "ไฟไหม้" },
-    { value: "สารเคมี หก/รั่วไหล", label: "สารเคมี หก/รั่วไหล" },
-    {
-      value: "อุบัติเหตุทาง รถยนต์/จักรยานยนต์",
-      label: "อุบัติเหตุทาง รถยนต์/จักรยานยนต์",
-    },
-  ];
-
-  const MySwal = withReactContent(Swal);
-
   let req_id;
   if (window.location.href) {
     req_id = parseURLParams(window.location.href);
@@ -67,8 +44,8 @@ const FormDetail = () => {
         const apiServiceRes = await axios.post(api_service + "/soveres", {
           idReq: req_id?.req_id[0],
         });
-        await setData(apiServiceRes.data);
-        setInpDetail(apiServiceRes.data[0].DETAIL);
+        setData(apiServiceRes.data);
+        // console.log("apiservice"+ apiServiceRes.data)
         const [empInfoRes, picInfoRes] = await Promise.all([
           axios.get(api_emp + "/emp-info/" + apiServiceRes.data[0].EMP_CD),
           axios.get(
@@ -77,11 +54,8 @@ const FormDetail = () => {
         ]);
         setEmp(empInfoRes.data);
         setPICFullName(picInfoRes.data);
-        setCheckedValues(riskMode(apiServiceRes.data[0].TYPE));
-        setInitRisk(apiServiceRes.data[0].RISK_LEVEL);
-
         const picListRes = await axios.post(api_service + "/ul", {
-          location_name: apiServiceRes.data[0].LOCATION_NAME,
+          location_name: apiServiceRes.data[0].LOCATION_NAME.toUpperCase(),
         });
 
         setPicList(picListRes.data);
@@ -91,7 +65,6 @@ const FormDetail = () => {
           )
         );
         setImage_after(base64String);
-        setInpDetail(data[0]?.DETAIL);
       } catch (err) {
         if (err.response?.status === 500) {
           MySwal.fire({
@@ -116,38 +89,16 @@ const FormDetail = () => {
     fetchData();
     // eslint-disable-next-line
   }, []);
-
-  useEffect(() => {
-    for (let i in checkedValues) {
-      let missData = 0;
-      for (let j in CHECKBOX_OPTIONS) {
-        if (checkedValues[i] !== CHECKBOX_OPTIONS[j].value) {
-          missData = missData + 1;
-        }
-      }
-      if (missData === 9) {
-        setFindedOther(checkedValues[i]);
-        setCheckedValues(checkedValues.filter((v) => v !== checkedValues[i]));
-        console.log(findedOther);
-        break;
-      }
-    }
-    // eslint-disable-next-line
-  }, [checkedValues]);
-
   if (!Load || !LoadEmp || !LoadPic) {
     console.log("LOADING..");
     return <div>Load.... . .. . . </div>;
   }
-
   let empDetail = "";
   if (LoadEmp) {
     empDetail = empData[0]?.EMP_NAME ? empData[0]?.EMP_NAME : "";
   }
-  console.log(data[0].IMG);
 
-  // let imgID = "";
-  // let imgURL = "/img/" + req_id.req_id + ".png";
+  let imgID = "";
   let imgURL = "http://163.50.57.177:4040/img/" + req_id.req_id;
   // let imgURL = "";
   // if (data[0].IMG) {
@@ -168,7 +119,7 @@ const FormDetail = () => {
           rounded="True"
           onClick={() => {
             Swal.fire({
-              imageUrl: imgURL + ".png" ? imgURL + ".png" : img_404,
+              imageUrl: imgURL ? imgURL : img_404,
               showConfirmButton: false, // Disable OK button
               showCancelButton: false, // Optionally disable cancel button for a cleaner experience
               backdrop: true, // Enable background click to close
@@ -247,56 +198,6 @@ const FormDetail = () => {
     console.log(selectedDate);
   };
 
-  let progress_bar = (
-    <div className="stepper-wrapper">
-      <div
-        id="step_1"
-        className={`stepper-item ${status === 1 ? "completed" : "completed"}`}
-      >
-        <div className="step-counter">1</div>
-        <div className="step-name">Issue</div>
-      </div>
-      <div
-        id="step_2"
-        className={`stepper-item ${
-          status === 1 ? "active" : status >= 2 ? "completed" : ""
-        }`}
-      >
-        <div className="step-counter">2</div>
-        <div className="step-name">Approve</div>
-      </div>
-      <div
-        id="step_3"
-        className={`stepper-item ${
-          status >= 3 ? "completed" : status === 2 ? "active" : ""
-        }`}
-      >
-        <div className="step-counter">3</div>
-        <div className="step-name">PIC confirm</div>
-      </div>
-      <div
-        id="step_4"
-        className={`stepper-item ${
-          status === 3 ? "active" : status >= 4 ? "completed" : ""
-        }`}
-      >
-        <div className="step-counter">4</div>
-        <div className="step-name">
-          {status === 3 ? "On progress" : "Finish"}
-        </div>
-      </div>
-      <div
-        id="step_5"
-        className={`stepper-item ${
-          status === 4 ? "active" : status === 5 ? "completed" : ""
-        }`}
-      >
-        <div className="step-counter">5</div>
-        <div className="step-name">Final approve</div>
-      </div>
-    </div>
-  );
-
   let reject_bar = (
     <>
       <div className="d-flex align-items-center justify-content-center">
@@ -307,44 +208,22 @@ const FormDetail = () => {
       </div>
     </>
   );
-  const postAtwork = (e) => {
-    const isChecked = e.target.checked;
-    if (isChecked) {
-      setAtwork(1);
-    } else {
-      setAtwork(0);
-    }
-  };
 
   let status1_label =
     token?.role === "ADMIN" ? (
       <div className="nice-form-group">
         <label id="guideForm">Selection PIC :</label>
-        <div className="row">
-          <div className="col-6">
-            <Select
-              id={"selected_pic"}
-              onChange={handleChange}
-              placeholder="Select PIC"
-              style={{ width: "100%" }}
-              options={options}
-            />
-          </div>
-          <div className="col-6">
-            <input
-              type="checkbox"
-              onChange={postAtwork}
-              className="custom-checkbox"
-            />
-            <label className="custom-label">&nbsp; Post to @Work</label>
-          </div>
-        </div>
+        <Select
+          id={"selected_pic"}
+          onChange={handleChange}
+          placeholder="Select PIC"
+          style={{ width: "50%" }}
+          options={options}
+        />
       </div>
     ) : (
       ""
     );
-
-  
 
   let status2_label = (
     <>
@@ -385,7 +264,8 @@ const FormDetail = () => {
               <Form.Group controlId="date_picker">
                 <FormLabel>Due date:</FormLabel>
                 <FormControl
-                  value={data[0].F_DUE} // Use ISOString for REST API
+                  type="date"
+                  value={data[0].DUE_DATE.split("T")[0]} // Use ISOString for REST API
                   onChange={handleDateChange}
                   disabled
                 />
@@ -479,123 +359,16 @@ const FormDetail = () => {
     </details>
   );
 
-  const handleCheckboxChange = (e) => {
-    const isChecked = e.target.checked;
-    const value = e.target.value;
-
-    if (value === "อื่นๆ") {
-      const otherValue = document.getElementById("inpOther").value;
-      setCheckedValues((prevValues) => {
-        if (isChecked) {
-          if (!prevValues.includes(otherValue)) {
-            return [...prevValues, otherValue];
-          }
-        } else {
-          return prevValues.filter((v) => v !== otherValue);
-        }
-      });
-    } else {
-      setCheckedValues((prevValues) => {
-        if (isChecked) {
-          if (!prevValues.includes(value)) {
-            return [...prevValues, value];
-          }
-        } else {
-          return prevValues.filter((v) => v !== value);
-        }
-      });
-    }
-    console.log(checkedValues);
-  };
-
-  const handleLabelClick = (e) => {
-    const input = e.target.previousSibling;
-    if (input.type === "checkbox") {
-      input.click();
-    }
-  };
-
-  let risk_mode = (
-    <>
-      <div className="nice-form-group">
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {CHECKBOX_OPTIONS.slice(0, 5).map((option, index) => (
-            <small>
-              <div key={option.value} style={{ marginRight: "10px" }}>
-                <input
-                  type="checkbox"
-                  value={option.value}
-                  checked={checkedValues.includes(option.value)}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor={option.value} onClick={handleLabelClick}>
-                  &nbsp; {option.label} &nbsp;
-                </label>
-              </div>
-            </small>
-          ))}
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {CHECKBOX_OPTIONS.slice(5, 9).map((option, index) => (
-            <small>
-              <div key={option.value} style={{ marginRight: "10px" }}>
-                <input
-                  type="checkbox"
-                  value={option.value}
-                  checked={checkedValues.includes(option.value)}
-                  onChange={handleCheckboxChange}
-                />
-                <label htmlFor={option.value} onClick={handleLabelClick}>
-                  &nbsp; {option.label} &nbsp;
-                </label>
-              </div>
-            </small>
-          ))}
-        </div>
-        <div style={{ display: "flex", flexWrap: "wrap" }}>
-          {CHECKBOX_OPTIONS.slice(9).map((option, index) => (
-            <div key={option.value} style={{ marginRight: "10px" }}>
-              <input
-                type="checkbox"
-                value={option.value}
-                checked={checkedValues.includes(option.value)}
-                onChange={handleCheckboxChange}
-              />
-              <label htmlFor={option.value} onClick={handleLabelClick}>
-                &nbsp;{option.label} &nbsp;
-              </label>
-            </div>
-          ))}
-        </div>
-        <small>
-          <div>
-            อื่นๆ &nbsp;
-            <input
-              autocomplete="off"
-              onChange={(e) => {
-                setFindedOther(e.target.value);
-                console.log(findedOther);
-              }}
-              id="inpOther"
-              placeholder="โปรดระบุ"
-              value={findedOther}
-            />
-          </div>
-        </small>
-      </div>
-    </>
-  );
-  console.log(data[0]);
   return (
-    <div className="container">
+    <div className="">
       <div className="demo-page" style={{ color: "#000000" }}>
-        <main className="demo-page-content">
+        <main id="cap_content" className="demo-page-content">
           <section>
             <div className="d-flex align-items-center justify-content-center">
               <img src={slogan} alt="slogan_m" style={{ width: "10rem" }} />
             </div>
             <div className="href-target" id="structure"></div>
-            {status === 6 ? reject_bar : progress_bar}
+            {status === 6 ? reject_bar : ""}
 
             <h1>
               <svg
@@ -624,7 +397,13 @@ const FormDetail = () => {
               </div>
               <div className="nice-form-group">
                 <label id="timeForm">Request Time :</label>
-                <small>{data ? data[0].F_DATETIME : "Undefinded"}</small>
+                <small>
+                  {data
+                    ? data[0].DATE_TIME.split("T")[0] +
+                      " " +
+                      data[0].DATE_TIME.split("T")[1].split(".")[0]
+                    : "Undefinded"}
+                </small>
               </div>
               <div className="nice-form-group">
                 <label id="requistorForm">Requestor : </label>
@@ -635,65 +414,15 @@ const FormDetail = () => {
               </div>
               <div className="nice-form-group">
                 <label id="positionForm">Detail :</label>
-                <textarea
-                  autocomplete="off"
-                  id="inp_detail"
-                  style={{ width: "80%" }}
-                  value={inpDetail}
-                  onChange={(e) => setInpDetail(e.target.value)}
-                  disabled={
-                    status === 1 && token?.role === "ADMIN" ? false : true
-                  }
-                />
+                <small>{data ? data[0].DETAIL : "Undefinded"}</small>
               </div>
               <div className="nice-form-group">
                 <label id="modeForm">Mode of risk : </label>
-                {/* <small>{data ? data[0].TYPE : "Undefinded"}</small> */}
-                {status === 1 && token?.role === "ADMIN" ? (
-                  risk_mode
-                ) : (
-                  <small>{data ? data[0].TYPE : "Undefinded"}</small>
-                )}
+                <small>{data ? data[0].TYPE : "Undefinded"}</small>
               </div>
               <div className="nice-form-group">
                 <label id="rankForm">Rank of risk : </label>
-                <div className="nice-form-group">
-                  {status === 1 && token?.role === "ADMIN" ? (
-                    <Select
-                      id={"risk_level"}
-                      onChange={(e) => {
-                        setInitRisk(e[0].label);
-                        console.log(initRisk);
-                      }}
-                      placeholder="Risk level"
-                      style={{ width: "80%" }}
-                      values={[
-                        {
-                          label: initRisk,
-                        },
-                      ]}
-                      options={[
-                        {
-                          value: 1,
-                          label:
-                            "ระดับ 1 (ต่ำ) : สามารถปฐมพยาบาลได้ ไม่จำเป็นต้องได้รับการรักษาโดยแพทย์",
-                        },
-                        {
-                          value: 2,
-                          label:
-                            "ระดับ 2 (กลาง) : จำเป็นต้องได้รับการรักษาโดยแพทย์ ที่โรงพยาบาลย์",
-                        },
-                        {
-                          value: 3,
-                          label:
-                            "ระดับ 3 (สูง) : อาจได้รับบาดเจ็บถึงขึ้นเสียชีวิต พิการ หรือทุพลภาพ",
-                        },
-                      ]}
-                    />
-                  ) : (
-                    <small>{data ? data[0].RISK_LEVEL : "Undefinded"}</small>
-                  )}
-                </div>
+                <small>{data ? data[0].RISK_LEVEL : "Undefinded"}</small>
               </div>
               <div className="nice-form-group">
                 <label id="guideForm">Suggestion :</label>
@@ -733,7 +462,7 @@ const FormDetail = () => {
                         <Col>
                           {status >= 4 && status < 6 ? (
                             <Image
-                              style={{ width: "10rem", height: "10rem" }}
+                              style={{ width: "15rem", height: "15rem" }}
                               src={
                                 `data:image/png;base64,${image_after}`
                                   ? `data:image/png;base64,${image_after}`
@@ -795,11 +524,6 @@ const FormDetail = () => {
                 idReq: req_id.req_id[0],
                 pic: picName,
                 status: status + 1,
-                detail: inpDetail,
-                type: checkedValues.concat(findedOther),
-                risk_level: initRisk,
-                atwork: atwork,
-                location: data[0].LOCATION_NAME,
               },
               {
                 headers: {
@@ -840,6 +564,7 @@ const FormDetail = () => {
       }
     } else if (tempStatus === 6) {
       try {
+        // console.log(remarkReject);
         axios
           .post(
             api_service + "/cfrm/2",
@@ -848,9 +573,6 @@ const FormDetail = () => {
               remark_reject: remark,
               status: tempStatus,
               cfrm_id: token.id,
-              type: data[0].TYPE,
-              detail: inpDetail,
-              risk_level: initRisk,
             },
             {
               headers: {
@@ -893,9 +615,6 @@ const FormDetail = () => {
               status: status + 1,
               action: document.getElementById("action").value,
               dueDate: selectedDate,
-              type: data[0].TYPE,
-              detail: inpDetail,
-              risk_level: initRisk,
             },
             {
               headers: {
@@ -928,59 +647,48 @@ const FormDetail = () => {
         console.log(err);
       }
     } else if (tempStatus === 3) {
-      if (picture && document.getElementById("remark").value) {
-        try {
-          axios
-            .post(
-              api_service + "/cfrm/4",
-              {
-                idReq: req_id.req_id[0],
-                pic: data[0].ACTION_PIC,
-                status: status + 1,
-                action: document.getElementById("action").value,
-                dueDate: selectedDate,
-                remark: document.getElementById("remark").value,
-                img: picture,
-                type: data[0].TYPE,
-                detail: inpDetail,
-                risk_level: initRisk,
+      try {
+        axios
+          .post(
+            api_service + "/cfrm/4",
+            {
+              idReq: req_id.req_id[0],
+              pic: data[0].ACTION_PIC,
+              status: status + 1,
+              action: document.getElementById("action").value,
+              dueDate: selectedDate,
+              remark: document.getElementById("remark").value,
+              img: picture,
+            },
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+                Authorization: token.token,
               },
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                  Authorization: token.token,
-                },
-              }
-            )
-            .then(() => {
-              window.location.reload();
-            })
-            .catch(function (error) {
-              if (error.response.status === 401) {
-                const message = "Unauthorized: Please log in."; // Extract error message if available
-                MySwal.fire({
-                  title: "Authentication Error: 401",
-                  text: message,
-                  icon: "error",
-                }).then(() => {
-                  localStorage.clear();
-                  window.location.replace("/login"); // Redirect to login page on confirmation
-                });
-              } else {
-                console.error(
-                  `Unexpected response status: ${error.response.status}`
-                ); // Handle other errors
-              }
-            });
-        } catch (err) {
-          console.log(err);
-        }
-      } else {
-        MySwal.fire({
-          title: "PIC",
-          text: "Please insert remark and image",
-          icon: "error",
-        });
+            }
+          )
+          .then(() => {
+            window.location.reload();
+          })
+          .catch(function (error) {
+            if (error.response.status === 401) {
+              const message = "Unauthorized: Please log in."; // Extract error message if available
+              MySwal.fire({
+                title: "Authentication Error: 401",
+                text: message,
+                icon: "error",
+              }).then(() => {
+                localStorage.clear();
+                window.location.replace("/login"); // Redirect to login page on confirmation
+              });
+            } else {
+              console.error(
+                `Unexpected response status: ${error.response.status}`
+              ); // Handle other errors
+            }
+          });
+      } catch (err) {
+        console.log(err);
       }
     } else if (tempStatus === 4) {
       try {
@@ -992,9 +700,6 @@ const FormDetail = () => {
               pic: data[0].ACTION_PIC,
               status: status + 1,
               cfrm_id: token.id,
-              type: data[0].TYPE,
-              detail: inpDetail,
-              risk_level: initRisk,
             },
             {
               headers: {
@@ -1051,4 +756,4 @@ const FormDetail = () => {
   }
 };
 
-export default FormDetail;
+export default FormCap;

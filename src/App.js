@@ -1,8 +1,7 @@
 import "./App.css";
 import "./index.css";
-import { Col, Button } from "react-bootstrap";
+import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
-import pe_image from "./images/PE.png";
 import img_404 from "./images/404_img.png";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
@@ -20,6 +19,10 @@ function App() {
   const [Load, setLoad] = useState(true);
   const [inputsearch, setInputSearch] = useState("");
   const MySwal = withReactContent(Swal);
+  const urlParams = new URLSearchParams(window.location.search);
+
+  let searchParam = urlParams.get("search") ? urlParams.get("search") : "";
+  let stParam = urlParams.get("st") ? urlParams.get("st") : "";
   useEffect(() => {
     async function fetchdata() {
       try {
@@ -56,16 +59,23 @@ function App() {
               setData_length(res.data.length);
             });
         } else {
-          await axios.get(api_service + "/sovereq").then((response) => {
-            setData(response.data);
-            setData_length(response.data.length);
-          });
+          await axios
+            .post(api_service + "/sovereq", {
+              // st: urlParm?.st[0] ? urlParm.st[0] : "",
+              st: urlParams.get("st") ? urlParams.get("st") : "",
+              search: urlParams.get("search") ? urlParams.get("search") : "",
+            })
+            .then((response) => {
+              setData(response.data);
+              setData_length(response.data.length);
+            });
         }
       } catch (err) {
         console.log(err);
       }
     }
     fetchdata();
+    // eslint-disable-next-line
   }, [api_service]);
   useEffect(() => {
     if (data !== undefined) {
@@ -79,7 +89,7 @@ function App() {
   }
   // let data_svoe = data.svoe
   let page;
-  
+
   if (urlParm?.page) {
     // console.log(page.page[0]);
     page = urlParm?.page[0];
@@ -89,8 +99,13 @@ function App() {
 
   let active = parseInt(page);
   let items = [];
-  for (let number = 1; number <= Math.ceil(data_length / 5); number++) {
-    let pages = "?page=" + number;
+  for (
+    let number = 1;
+    number <= Math.ceil(data === "No data response" ? 1 : data_length / 5);
+    number++
+  ) {
+    let pages =
+      "?page=" + number + "&search=" + searchParam +"&st=" + stParam;
     items.push(
       <Pagination.Item key={number} href={pages} active={number === active}>
         {number}
@@ -102,7 +117,9 @@ function App() {
 
   let dataPerPage = [];
   let imgID;
-  let imgURL;
+  // let imgURL = "163.50.57.177:4040/img/" + data[0]?.idReq + ".png";
+  let imgURL
+
 
   const countByStatus = {
     1: 0, // Issue
@@ -112,17 +129,18 @@ function App() {
     5: 0, // Final Approve
     6: 0, // Reject
   };
-
-  data.forEach((e) => {
-    countByStatus[e.STATUS] += 1;
-  });
+  if (data !== "No data response") {
+    data.forEach((e) => {
+      countByStatus[e.STATUS] += 1;
+    });
+  }
 
   const issue = countByStatus[1];
   const approve = countByStatus[2];
   const picConfirm = countByStatus[3];
   const finish = countByStatus[4];
   const finalApprove = countByStatus[5];
-  // const reject = countByStatus[6];
+  const reject = countByStatus[6];
 
   let searchHandler = (e) => {
     //convert input text to lower case
@@ -130,84 +148,117 @@ function App() {
     console.log(lowerCase);
     setInputSearch(lowerCase);
   };
-
-  for (let i = stPage; i < allPage; i++) {
-    if (i < data_length) {
-      if (data[i].IMG) {
-        imgID = parseURLParams(data[i].IMG);
-        imgURL = "https://drive.google.com/thumbnail?id=" + imgID.id;
-      }
-      dataPerPage.push(
-        <Link to={"./form?req_id=" + data[i].REQ_ID}>
-          <div className="card mt-2 card-custom" key={data[i.REQ_ID]}>
-            <div
-              className="card-body card-body-custom"
-              style={{ color: "white" }}
-            >
-              <div className="row">
-                <div className="col-3 d-flex align-items-center justify-content-center">
-                  <img
-                    src={imgURL ? imgURL : img_404}
-                    alt="pe"
-                    style={{ width: "10rem", height: "10rem" }}
-                  />
-                </div>
-                <div className="col-9">
-                  <div className="row">
-                    <div className="col-6">
-                      <h4>{data[i].LOCATION_NAME}</h4>
-                    </div>
-                    <div className="col-6 d-flex align-items-end justify-content-end"></div>
+  if (data !== "No data response") {
+    for (let i = stPage; i < allPage; i++) {
+      if (i < data_length) {
+        // if (data[i].IMG) {
+        //   imgID = parseURLParams(data[i].IMG);
+        //   imgURL = `https://lh3.google.com/u/0/d/${imgID.id}`;
+        // }
+        if(data[i].IMG.split(", ").length === 1){
+          imgURL = "http://163.50.57.177:4040/img/" + data[i].REQ_ID + ".png";
+        }else{
+          imgURL = "http://163.50.57.177:4040/img/" + data[i].REQ_ID + "_0.png";
+        }
+        
+        dataPerPage.push(
+          <Link to={"./form?req_id=" + data[i].REQ_ID}>
+            <div className="card mt-2 card-custom" key={data[i.REQ_ID]}>
+              <div
+                className="card-body card-body-custom"
+                style={{ color: "white" }}
+              >
+                <div className="row">
+                  <div className="col-3 d-flex align-items-center justify-content-center">
+                    <img
+                      src={imgURL ? imgURL : img_404}
+                      alt=""
+                      style={{ width: "10rem", height: "10rem" }}
+                    />
                   </div>
-                  <div className="nice-form-group">
-                    <label id="timeForm">Detail: {data[i].DETAIL}</label>
-                    <label id="timeForm">Type: {data[i].TYPE}</label>
-                    <label id="timeForm">
-                      Risk level: {data[i].RISK_LEVEL}
-                    </label>
-                    <label id="timeForm">requestor: {data[i].EMP_CD}</label>
-                    <div className="d-flex align-items-end justify-content-end">
-                      <label
-                        className={`status-${
-                          data[i].STATUS === 1
-                            ? "issue"
-                            : data[i].STATUS === 2
-                            ? "approve"
-                            : data[i].STATUS === 3
-                            ? "confirm"
-                            : data[i].STATUS === 4
-                            ? "finish"
-                            : data[i].STATUS === 5
-                            ? "fapprove"
-                            : data[i].STATUS === 6
-                            ? "reject"
-                            : "Unknown data"
-                        }`}
-                        id="timeForm"
-                      >
-                        {data[i].STATUS === 1
-                          ? "Issued"
-                          : data[i].STATUS === 2
-                          ? "Approved"
-                          : data[i].STATUS === 3
-                          ? "PIC Confirm"
-                          : data[i].STATUS === 4
-                          ? "Finish"
-                          : data[i].STATUS === 5
-                          ? "Final approve"
-                          : data[i].STATUS === 6
-                          ? "Reject"
-                          : "Unknown data"}
+                  <div className="col-9">
+                    <div className="row">
+                      <div className="col-6">
+                        <h4>{data[i].LOCATION_NAME}</h4>
+                      </div>
+                      <div className="col-6 d-flex align-items-end justify-content-end"></div>
+                    </div>
+                    <div className="nice-form-group">
+                      <label id="timeForm">Detail: {data[i].DETAIL}</label>
+                      <label id="timeForm">Type: {data[i].TYPE}</label>
+                      <label id="timeForm">
+                        Risk level: {data[i].RISK_LEVEL}
                       </label>
+                      <label id="timeForm">Requestor: {data[i].EMP_CD}</label>
+                      <label>Request time: {data[i].F_DATETIME}</label>
+                      <label>Last update: {data[i].F_UPDATE}</label>
+                      <div className="d-flex align-items-end justify-content-end">
+                        <label
+                          className={`status-${
+                            data[i].STATUS === 1
+                              ? "issue"
+                              : data[i].STATUS === 2
+                              ? "approve"
+                              : data[i].STATUS === 3
+                              ? "confirm"
+                              : data[i].STATUS === 4
+                              ? "finish"
+                              : data[i].STATUS === 5
+                              ? "fapprove"
+                              : data[i].STATUS === 6
+                              ? "reject"
+                              : "Unknown data"
+                          }`}
+                          id="timeForm"
+                        >
+                          {data[i].STATUS === 1
+                            ? "Issued"
+                            : data[i].STATUS === 2
+                            ? "Approved"
+                            : data[i].STATUS === 3
+                            ? "PIC Confirm"
+                            : data[i].STATUS === 4
+                            ? "Finish"
+                            : data[i].STATUS === 5
+                            ? "Final approve"
+                            : data[i].STATUS === 6
+                            ? "Reject"
+                            : "Unknown data"}
+                        </label>
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
-        </Link>
-      );
+          </Link>
+        );
+      }
     }
+  } else {
+    dataPerPage.push(
+      <div className="card mt-2 card-custom">
+        <div className="card-body card-body-custom" style={{ color: "white" }}>
+          <div className="row">
+            <div className="col-3 d-flex align-items-center justify-content-center">
+              <img
+                src={img_404}
+                alt="pe"
+                style={{ width: "10rem", height: "10rem" }}
+              />
+            </div>
+            <div className="col-9">
+              <div className="row">
+                <div className="col-6">
+                  <h4>No data</h4>
+                </div>
+                <div className="col-6 d-flex align-items-end justify-content-end"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   const paginationBasic = (
@@ -227,18 +278,36 @@ function App() {
                 style={{ color: "white" }}
                 className="card-body card-body-custom"
               >
-                <p
-                  onClick={() => {
-                    window.location.replace("?issue");
-                  }}
-                >
-                  Issue: {issue}
+                <p>
+                  <a className="hash-tag" href="./?st=1">
+                    # Issue: {issue}
+                  </a>
                 </p>
-                <p>Approve: {approve}</p>
-                <p>PIC confirm: {picConfirm}</p>
-                <p>Finish: {finish}</p>
-                <p>Final Approve: {finalApprove}</p>
-                {/* <p>Reject: {reject}</p> */}
+                <p>
+                  <a className="hash-tag" href="./?st=2">
+                    # Approve: {approve}
+                  </a>
+                </p>
+                <p>
+                  <a className="hash-tag" href="./?st=3">
+                    # PIC confirm: {picConfirm}
+                  </a>
+                </p>
+                <p>
+                  <a className="hash-tag" href="./?st=4">
+                    # Finish: {finish}
+                  </a>
+                </p>
+                <p>
+                  <a className="hash-tag" href="./?st=5">
+                    # Final Approve: {finalApprove}
+                  </a>
+                </p>
+                <p>
+                  <a className="hash-tag" href="./?st=6">
+                    # Reject: {reject}
+                  </a>
+                </p>
               </div>
             </div>
           </div>
@@ -265,6 +334,10 @@ function App() {
                         className="button-custom"
                         variant="warning"
                         style={{ width: "100%" }}
+                        onClick={() => {
+                          console.log(inputsearch);
+                          window.location.replace("/?search=" + inputsearch);
+                        }}
                       >
                         {" "}
                         Search{" "}

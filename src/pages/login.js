@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Swal from "sweetalert2";
 import withReactContent from "sweetalert2-react-content";
+import { getCookie, setCookie } from "../function/cookies"; 
 
 function Login() {
   const navigate = useNavigate();
@@ -15,6 +16,7 @@ function Login() {
     user: "",
     password: "",
   });
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
@@ -36,7 +38,7 @@ function Login() {
                 expiresOn: Date.now() + 1000 * 60 * 60 * 1, // 12 hours in ms 1000 ms * 60 s * 60 m * 24 hr
               })
             );
-            localStorage.setItem("token", JSON.stringify(res.data));
+            localStorage.setItem("token", JSON.stringify(res.data))
             MySwal.fire({
               title: "Successfully!",
               text: "Loged in",
@@ -45,8 +47,8 @@ function Login() {
               timerProgressBar: true
             }).then((result) => {
               if (result.isConfirmed || result.dismiss) {
-                // window.location.replace("/");
-                navigate(-1)
+                window.location.replace(localStorage.getItem("prev"));
+                // navigate('/', { state: { key: "value" } })
               }
             });
           }
@@ -89,7 +91,7 @@ function Login() {
                       name="user"
                       className="form-control"
                       type="text"
-                      maxlength="5"
+                      maxLength="5"
                       placeholder="รหัสพนักงาน 5 หลัก"
                       value={formData.name}
                       onChange={handleChange}
