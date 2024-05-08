@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../css/index.css";
 import slogan from "../images/slogan_m.png";
+import loading from "../images/loading1.gif";
 import axios from "axios";
 import Select from "react-dropdown-select";
 import "../css/pbar.css";
@@ -91,7 +92,20 @@ const FormCap = () => {
   }, []);
   if (!Load || !LoadEmp || !LoadPic) {
     console.log("LOADING..");
-    return <div>Load.... . .. . . </div>;
+    return (
+      <>
+        <div style={{
+          margin: "40px",
+          display: "flex", // Use flexbox
+          justifyContent: "center", // Center content horizontally
+          alignItems: "center", // Center content vertically
+          height: '70vh' // Set the height of the div to be full viewport height or any desired value
+        }}>
+          <div >
+            <img width={100} height={100} src={loading} alt="Loading..."></img>
+          </div>
+        </div>
+      </>);
   }
   let empDetail = "";
   if (LoadEmp) {
@@ -361,9 +375,9 @@ const FormCap = () => {
 
   return (
     <div className="">
-      <div className="demo-page" style={{ color: "#000000" }}>
-        <main id="cap_content" className="demo-page-content">
-          <section>
+      <div className="demo-page" style={{ color: "#000000" }} >
+        <main id="cap_content" className="demo-page-content" >
+          <section style={{ borderRadius: "0.5px" }}>
             <div className="d-flex align-items-center justify-content-center">
               <img src={slogan} alt="slogan_m" style={{ width: "10rem" }} />
             </div>
@@ -400,8 +414,8 @@ const FormCap = () => {
                 <small>
                   {data
                     ? data[0].DATE_TIME.split("T")[0] +
-                      " " +
-                      data[0].DATE_TIME.split("T")[1].split(".")[0]
+                    " " +
+                    data[0].DATE_TIME.split("T")[1].split(".")[0]
                     : "Undefinded"}
                 </small>
               </div>
@@ -505,8 +519,8 @@ const FormCap = () => {
                 status !== 4 &&
                 status !== 5 &&
                 status !== 6
-              ? button_comp
-              : ""}
+                ? button_comp
+                : ""}
           </section>
         </main>
       </div>

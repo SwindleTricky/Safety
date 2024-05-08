@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../css/index.css";
 import slogan from "../images/slogan_m.png";
+import loading from "../images/loading1.gif";
 import axios from "axios";
 import Select from "react-dropdown-select";
 import "../css/pbar.css";
@@ -10,6 +11,7 @@ import Swal from "sweetalert2";
 import Resizer from "react-image-file-resizer";
 import img_404 from "../images/404_img.png";
 import { riskMode } from "../function/riskMode";
+import Footer from "../components/footer";
 
 const FormDetail = () => {
   const api_service = process.env.REACT_APP_API_SERVICE;
@@ -137,7 +139,23 @@ const FormDetail = () => {
 
   if (!Load || !LoadEmp || !LoadPic) {
     console.log("LOADING..");
-    return <div>Load.... . .. . . </div>;
+    return (
+      <>
+        <div
+          style={{
+            margin: "40px",
+            display: "flex", // Use flexbox
+            justifyContent: "center", // Center content horizontally
+            alignItems: "center", // Center content vertically
+            height: "70vh", // Set the height of the div to be full viewport height or any desired value
+          }}
+        >
+          <div>
+            <img width={100} height={100} src={loading} alt="Loading..."></img>
+          </div>
+        </div>
+      </>
+    );
   }
 
   let empDetail = "";
@@ -344,8 +362,6 @@ const FormDetail = () => {
       ""
     );
 
-  
-
   let status2_label = (
     <>
       <div className="nice-form-group">
@@ -359,11 +375,16 @@ const FormDetail = () => {
         </small>
       </div>
       <div className="nice-form-group">
-        <label id="guideForm">Counter measure :</label>
-        {status === 2 ? (
-          <textarea id="action"></textarea>
+        {status === 2 && token ? (
+          <>
+            <label id="guideForm">Counter measure :</label>
+            <textarea id="action"></textarea>
+          </>
         ) : (
-          <small id="action">{data[0].ACTION}</small>
+          <>
+            <label id="guideForm">Counter measure :</label>
+            <textarea id="action" disabled>{data[0].ACTION}</textarea>
+          </>
         )}
       </div>
       {status === 3 ? (
@@ -374,30 +395,30 @@ const FormDetail = () => {
       ) : (
         <div className="nice-form-group">
           <label id="guideForm">Remark :</label>
-          <small id="remark">{data[0].REMARK_DETAIL}</small>
+          <textarea id="remark" disabled>{data[0].REMARK_DETAIL}</textarea>
         </div>
       )}
 
       <div className="row">
         <div className="col-6 mt-3">
-          {status > 2 && status < 6 ? (
+          {status >= 2 && status < 6 && token ? (
             <>
               <Form.Group controlId="date_picker">
-                <FormLabel>Due date:</FormLabel>
+                <FormLabel>Pick your expected due date:</FormLabel>
                 <FormControl
-                  value={data[0].F_DUE} // Use ISOString for REST API
+                  type="date"
+                  value={selectedDate.toISOString().split("T")[0]} // Use ISOString for REST API
                   onChange={handleDateChange}
-                  disabled
                 />
               </Form.Group>
             </>
           ) : (
             <Form.Group controlId="date_picker">
-              <FormLabel>Pick your expected due date:</FormLabel>
+              <FormLabel>Due date:</FormLabel>
               <FormControl
-                type="date"
-                value={selectedDate.toISOString().split("T")[0]} // Use ISOString for REST API
+                value={data[0].F_DUE} // Use ISOString for REST API
                 onChange={handleDateChange}
+                disabled
               />
             </Form.Group>
           )}
@@ -418,7 +439,7 @@ const FormDetail = () => {
   let showLabel = "";
   if (status === 1) {
     showLabel = status1_label;
-  } else if (status >= 2 && status < 6 && token) {
+  } else if (status >= 2 && status < 6) {
     showLabel = status2_label;
   }
 
@@ -591,179 +612,186 @@ const FormDetail = () => {
       <div className="demo-page" style={{ color: "#000000" }}>
         <main className="demo-page-content">
           <section>
-            <div className="d-flex align-items-center justify-content-center">
+            <div
+              className="d-flex align-items-center justify-content-center"
+              style={{ padding: "0px 0px 20px 0px" }}
+            >
               <img src={slogan} alt="slogan_m" style={{ width: "10rem" }} />
             </div>
             <div className="href-target" id="structure"></div>
             {status === 6 ? reject_bar : progress_bar}
-
-            <h1>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="24"
-                height="24"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="feather feather-layers"
-              >
-                <polygon points="12 2 2 7 12 12 22 7 12 2" />
-                <polyline points="2 17 12 22 22 17" />
-                <polyline points="2 12 12 17 22 12" />
-              </svg>
-              {data[0] ? data[0].LOCATION_NAME : "Undefinded"}
-            </h1>
-            <div>
-              <div className="nice-form-group">
-                <label id="formID">
-                  Request ID : {req_id ? req_id.req_id : "Undefinded"}
-                </label>
-              </div>
-              <div className="nice-form-group">
-                <label id="timeForm">Request Time :</label>
-                <small>{data ? data[0].F_DATETIME : "Undefinded"}</small>
-              </div>
-              <div className="nice-form-group">
-                <label id="requistorForm">Requestor : </label>
-                <small>
-                  {data[0].EMP_CD ? data[0].EMP_CD : "Undefinded"}{" "}
-                  {empDetail ? empDetail : ""}
-                </small>
-              </div>
-              <div className="nice-form-group">
-                <label id="positionForm">Detail :</label>
-                <textarea
-                  autocomplete="off"
-                  id="inp_detail"
-                  style={{ width: "80%" }}
-                  value={inpDetail}
-                  onChange={(e) => setInpDetail(e.target.value)}
-                  disabled={
-                    status === 1 && token?.role === "ADMIN" ? false : true
-                  }
-                />
-              </div>
-              <div className="nice-form-group">
-                <label id="modeForm">Mode of risk : </label>
-                {/* <small>{data ? data[0].TYPE : "Undefinded"}</small> */}
-                {status === 1 && token?.role === "ADMIN" ? (
-                  risk_mode
-                ) : (
-                  <small>{data ? data[0].TYPE : "Undefinded"}</small>
-                )}
-              </div>
-              <div className="nice-form-group">
-                <label id="rankForm">Rank of risk : </label>
+            <div style={{ padding: "0px 55px 0px 55px" }}>
+              <h1 style={{ padding: "15px 0px 15px 0px" }}>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="feather feather-layers"
+                >
+                  <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                  <polyline points="2 17 12 22 22 17" />
+                  <polyline points="2 12 12 17 22 12" />
+                </svg>
+                <b style={{ color: "" }}>
+                  {" "}
+                  Risk Location :{" "}
+                  {data[0] ? data[0].LOCATION_NAME : "Undefinded"}
+                </b>
+              </h1>
+              <div>
                 <div className="nice-form-group">
+                  <label id="formID">Request ID :</label>
+                  <small>{req_id ? req_id.req_id : "Undefinded"}</small>
+                </div>
+                <div className="nice-form-group">
+                  <label id="timeForm">Request Time :</label>
+                  <small>{data ? data[0].F_DATETIME : "Undefinded"}</small>
+                </div>
+                <div className="nice-form-group">
+                  <label id="requistorForm">Requestor : </label>
+                  <small>
+                    {data[0].EMP_CD ? data[0].EMP_CD : "Undefinded"}{" "}
+                    {empDetail ? empDetail : ""}
+                  </small>
+                </div>
+                <div className="nice-form-group">
+                  <label id="positionForm">Detail :</label>
+                  <textarea
+                    autocomplete="off"
+                    id="inp_detail"
+                    style={{ width: "80%" }}
+                    value={inpDetail}
+                    onChange={(e) => setInpDetail(e.target.value)}
+                    disabled={
+                      status === 1 && token?.role === "ADMIN" ? false : true
+                    }
+                  />
+                </div>
+                <div className="nice-form-group">
+                  <label id="modeForm">Mode of risk : </label>
+                  {/* <small>{data ? data[0].TYPE : "Undefinded"}</small> */}
                   {status === 1 && token?.role === "ADMIN" ? (
-                    <Select
-                      id={"risk_level"}
-                      onChange={(e) => {
-                        setInitRisk(e[0].label);
-                        console.log(initRisk);
-                      }}
-                      placeholder="Risk level"
-                      style={{ width: "80%" }}
-                      values={[
-                        {
-                          label: initRisk,
-                        },
-                      ]}
-                      options={[
-                        {
-                          value: 1,
-                          label:
-                            "ระดับ 1 (ต่ำ) : สามารถปฐมพยาบาลได้ ไม่จำเป็นต้องได้รับการรักษาโดยแพทย์",
-                        },
-                        {
-                          value: 2,
-                          label:
-                            "ระดับ 2 (กลาง) : จำเป็นต้องได้รับการรักษาโดยแพทย์ ที่โรงพยาบาลย์",
-                        },
-                        {
-                          value: 3,
-                          label:
-                            "ระดับ 3 (สูง) : อาจได้รับบาดเจ็บถึงขึ้นเสียชีวิต พิการ หรือทุพลภาพ",
-                        },
-                      ]}
-                    />
+                    risk_mode
                   ) : (
-                    <small>{data ? data[0].RISK_LEVEL : "Undefinded"}</small>
+                    <small>{data ? data[0].TYPE : "Undefinded"}</small>
                   )}
                 </div>
-              </div>
-              <div className="nice-form-group">
-                <label id="guideForm">Suggestion :</label>
-                <small>{data ? data[0]?.REMARK : "Undefinded"}</small>
-              </div>
-              {showLabel}
-              {/* {status1_label}
+                <div className="nice-form-group">
+                  <label id="rankForm">Rank of risk : </label>
+                  <div className="nice-form-group">
+                    {status === 1 && token?.role === "ADMIN" ? (
+                      <Select
+                        id={"risk_level"}
+                        onChange={(e) => {
+                          setInitRisk(e[0].label);
+                          console.log(initRisk);
+                        }}
+                        placeholder="Risk level"
+                        style={{ width: "80%" }}
+                        values={[
+                          {
+                            label: initRisk,
+                          },
+                        ]}
+                        options={[
+                          {
+                            value: 1,
+                            label:
+                              "ระดับ 1 (ต่ำ) : สามารถปฐมพยาบาลได้ ไม่จำเป็นต้องได้รับการรักษาโดยแพทย์",
+                          },
+                          {
+                            value: 2,
+                            label:
+                              "ระดับ 2 (กลาง) : จำเป็นต้องได้รับการรักษาโดยแพทย์ ที่โรงพยาบาลย์",
+                          },
+                          {
+                            value: 3,
+                            label:
+                              "ระดับ 3 (สูง) : อาจได้รับบาดเจ็บถึงขึ้นเสียชีวิต พิการ หรือทุพลภาพ",
+                          },
+                        ]}
+                      />
+                    ) : (
+                      <small>{data ? data[0].RISK_LEVEL : "Undefinded"}</small>
+                    )}
+                  </div>
+                </div>
+                <div className="nice-form-group">
+                  <label id="guideForm">Suggestion :</label>
+                  <small>{data ? data[0]?.REMARK : "Undefinded"}</small>
+                </div>
+                {showLabel}
+                {/* {status1_label}
               {status2_label} */}
 
-              <div className="nice-form-group d-flex align-items-center justify-content-center">
-                <table>
-                  <thead>
-                    <tr>
-                      <th>
-                        <div className="nice-form-group">
-                          <label>Image of risk : </label>
-                        </div>
-                      </th>
-                      <th>
-                        {status >= 4 && status < 6 ? (
+                <div className="nice-form-group d-flex align-items-center justify-content-center">
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>
                           <div className="nice-form-group">
-                            <label id="rankForm">Image after : </label>
+                            <label>Image of risk : </label>
                           </div>
-                        ) : (
-                          ""
-                        )}
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td className="pe-5">
-                        <Col>{riskImageComp}</Col>
-                      </td>
-                      <td>
-                        {/* <img src={`data:image/png;base64,${image_after}`} alt="after"/> */}
-                        <Col>
+                        </th>
+                        <th>
                           {status >= 4 && status < 6 ? (
-                            <Image
-                              style={{ width: "10rem", height: "10rem" }}
-                              src={
-                                `data:image/png;base64,${image_after}`
-                                  ? `data:image/png;base64,${image_after}`
-                                  : img_404
-                              }
-                              alt="test_image"
-                              rounded="True"
-                              onClick={() => {
-                                Swal.fire({
-                                  imageUrl:
-                                    `data:image/png;base64,${image_after}`
-                                      ? `data:image/png;base64,${image_after}`
-                                      : img_404,
-                                  showConfirmButton: false, // Disable OK button
-                                  showCancelButton: false, // Optionally disable cancel button for a cleaner experience
-                                  backdrop: true, // Enable background click to close
-                                  allowEscapeKey: true, // Allow Escape key to close
-                                  showCloseButton: true,
-                                  background: "",
-                                });
-                              }}
-                            />
+                            <div className="nice-form-group">
+                              <label id="rankForm">Image after : </label>
+                            </div>
                           ) : (
                             ""
                           )}
-                        </Col>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="pe-5">
+                          <Col>{riskImageComp}</Col>
+                        </td>
+                        <td>
+                          {/* <img src={`data:image/png;base64,${image_after}`} alt="after"/> */}
+                          <Col>
+                            {status >= 4 && status < 6 ? (
+                              <Image
+                                style={{ width: "10rem", height: "10rem" }}
+                                src={
+                                  `data:image/png;base64,${image_after}`
+                                    ? `data:image/png;base64,${image_after}`
+                                    : img_404
+                                }
+                                alt="test_image"
+                                rounded="True"
+                                onClick={() => {
+                                  Swal.fire({
+                                    imageUrl:
+                                      `data:image/png;base64,${image_after}`
+                                        ? `data:image/png;base64,${image_after}`
+                                        : img_404,
+                                    showConfirmButton: false, // Disable OK button
+                                    showCancelButton: false, // Optionally disable cancel button for a cleaner experience
+                                    backdrop: true, // Enable background click to close
+                                    allowEscapeKey: true, // Allow Escape key to close
+                                    showCloseButton: true,
+                                    background: "",
+                                  });
+                                }}
+                              />
+                            ) : (
+                              ""
+                            )}
+                          </Col>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
             {/* Other form groups go here */}

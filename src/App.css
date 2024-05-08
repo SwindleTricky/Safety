@@ -23,18 +23,21 @@
   color: white;
 }
 
-a:link {text-decoration: none; }
+a:link {
+  text-decoration: none;
+}
 
 .App-link {
   color: #61dafb;
 }
-.card{
-  background-color: 	rgba(255, 255, 255, 0.2) !important;
-  border-color:rgba(255, 255, 255, 0.2) !important
+.card {
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 8px 4px -6px rgb(151, 151, 151);
 }
-.card-custom:hover{
-  background-color: 	rgba(251,221,18, 0.5) !important;
-  border-color:rgba(251,221,18, 0.2) !important
+.card-custom:hover {
+  background-color: rgba(254, 240, 152, 0.5) !important;
+  border-color: rgba(251, 221, 18, 0.2) !important;
 }
 .card-body {
   color: rgb(0, 0, 0) !important;
@@ -43,81 +46,80 @@ a:link {text-decoration: none; }
 
 .button-custom {
   color: white !important ;
-  background-color:	#006203 !important;
-  border-color: 	#006203 !important;
+  background-color: #006203 !important;
+  border-color: #006203 !important;
 }
 /* .input-custom{
   background-color: #2C353D !important;
   color: #858EAD !important;
   border-color: #2C353D !important;
 } */
-::placeholder{
-  color: #858EAD !important;
+::placeholder {
+  color: #858ead !important;
 }
 
-.Nav-color{
-  background-color: #262D34 !important;
+.Nav-color {
+  background-color: #262d34 !important;
 }
 
 .shopping-cart-btn {
-  position: fixed ;
+  position: fixed;
 }
 
-.card-body-slide{
+.card-body-slide {
   top: 10px;
   z-index: 9999;
 }
 
-.topic-custom{
-  color: #FF6934;
+.topic-custom {
+  color: #ff6934;
   font-size: larger;
   font-weight: bold;
   text-align: center;
 }
 
 .status-issue {
-  color: #fff700 !important;
-  background-color: rgb(25, 99, 56);
+  color: #fbfae6 !important;
+  background-color: rgba(67, 156, 244, 0.58);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
 }
-.status-approve{
-  color: #01cdfe !important;
-  background-color: rgb(25, 99, 56);
+.status-approve {
+  color: #fbfae6 !important;
+  background-color: rgb(219 212 142);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
 }
-.status-confirm{
-  color: #00d49f !important;
-  background-color: rgb(25, 99, 56);
+.status-confirm {
+  color: #fbfae6 !important;
+  background-color: rgb(249 204 107);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
 }
-.status-finish{
-  color: #05ffa1 !important;
-  background-color: rgb(25, 99, 56);
+.status-finish {
+  color: #fbfae6 !important;
+  background-color: rgb(130 247 192);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
 }
-.status-fapprove{
-  color: #02f196 !important;
-  background-color: rgb(25, 99, 56);
+.status-fapprove {
+  color: #fbfae6 !important;
+  background-color: rgb(92 197 99);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
 }
-.status-reject{
-  color: #e2e2e2 !important;
-  background-color: rgb(243, 47, 47);
+.status-reject {
+  color: #fbfae6 !important;
+  background-color: rgb(129 129 129);
   border-radius: 5px;
-  padding: 5px;
+  padding: 10px;
 }
-.hash-tag{
+.hash-tag {
   color: black;
 }
-.hash-tag:hover{
+.hash-tag:hover {
   color: white;
 }
-
 
 @keyframes App-logo-spin {
   from {
@@ -128,8 +130,4 @@ a:link {text-decoration: none; }
   }
 }
 
-body {
-  background-image: url('/src/images/bg-pattern-3.png'), linear-gradient(to top, rgb(158, 209, 159), rgba(158, 209, 159)) !important;
-  background-repeat: no-repeat;  /* Optional, prevent image tiling */
-  /* Other body styles (margin, font-family, etc.) */
-}
+

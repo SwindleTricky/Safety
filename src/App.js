@@ -3,6 +3,7 @@ import "./index.css";
 import { Button } from "react-bootstrap";
 import Form from "react-bootstrap/Form";
 import img_404 from "./images/404_img.png";
+import loading from "./images/loading1.gif";
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import Pagination from "react-bootstrap/Pagination";
@@ -19,6 +20,7 @@ function App() {
   const [Load, setLoad] = useState(true);
   const [inputsearch, setInputSearch] = useState("");
   const MySwal = withReactContent(Swal);
+  const [color, setColor] = useState();
   const urlParams = new URLSearchParams(window.location.search);
 
   let searchParam = urlParams.get("search") ? urlParams.get("search") : "";
@@ -35,7 +37,7 @@ function App() {
               },
               {
                 headers: {
-                  Authorization: token.token,
+                  Authorization: token?.token,
                 },
               }
             )
@@ -44,13 +46,14 @@ function App() {
                 title: "ERROR " + error.response.status,
                 text:
                   error.response.status === 401
-                    ? "Session expired"
+                    ? "please login"
                     : error.response.statusText,
                 icon: "error",
               }).then((result) => {
                 if (result.isConfirmed || result.dismiss) {
                   localStorage.clear();
-                  window.location.href("/");
+                  localStorage.setItem("prev", window.location.href)
+                  window.location.replace("/login");
                 }
               });
             })
@@ -85,7 +88,23 @@ function App() {
 
   if (Load) {
     console.log("LOADING..");
-    return <div>Load.... . .. . . </div>;
+    return (
+      <>
+        <div
+          style={{
+            margin: "40px",
+            display: "flex", // Use flexbox
+            justifyContent: "center", // Center content horizontally
+            alignItems: "center", // Center content vertically
+            height: "70vh", // Set the height of the div to be full viewport height or any desired value
+          }}
+        >
+          <div>
+            <img width={100} height={100} src={loading} alt="Loading..."></img>
+          </div>
+        </div>
+      </>
+    );
   }
   // let data_svoe = data.svoe
   let page;
@@ -99,27 +118,48 @@ function App() {
 
   let active = parseInt(page);
   let items = [];
+
   for (
     let number = 1;
     number <= Math.ceil(data === "No data response" ? 1 : data_length / 5);
     number++
   ) {
-    let pages =
-      "?page=" + number + "&search=" + searchParam +"&st=" + stParam;
-    items.push(
-      <Pagination.Item key={number} href={pages} active={number === active}>
-        {number}
-      </Pagination.Item>
-    );
+    let pages = "?page=" + number + "&search=" + searchParam + "&st=" + stParam;
+
+    if (number <= parseInt(page) + 2 && number >= parseInt(page) - 2) {
+      items.push(
+        <Pagination.Item key={number} href={pages} active={number === active}>
+          {number}
+        </Pagination.Item>
+      );
+    } else if (number === parseInt(page) + 3) {
+      items.push(<Pagination.Ellipsis />);
+    } else if (number === parseInt(page) - 3) {
+      items.push(<Pagination.Ellipsis />);
+    } else if (number === 1) {
+      items.push(
+        <Pagination.Item key={number} href={pages} active={number === active}>
+          {number}
+        </Pagination.Item>
+      );
+    } else if (
+      number === Math.ceil(data === "No data response" ? 1 : data_length / 5)
+    ) {
+      items.push(
+        <Pagination.Item key={number} href={pages} active={number === active}>
+          {number}
+        </Pagination.Item>
+      );
+    }
   }
+
   let allPage = page * 5;
   let stPage = allPage - 5;
 
   let dataPerPage = [];
-  let imgID;
+  // let imgID;
   // let imgURL = "163.50.57.177:4040/img/" + data[0]?.idReq + ".png";
-  let imgURL
-
+  let imgURL;
 
   const countByStatus = {
     1: 0, // Issue
@@ -155,12 +195,12 @@ function App() {
         //   imgID = parseURLParams(data[i].IMG);
         //   imgURL = `https://lh3.google.com/u/0/d/${imgID.id}`;
         // }
-        if(data[i].IMG.split(", ").length === 1){
+        if (data[i].IMG.split(", ").length === 1) {
           imgURL = "http://163.50.57.177:4040/img/" + data[i].REQ_ID + ".png";
-        }else{
+        } else {
           imgURL = "http://163.50.57.177:4040/img/" + data[i].REQ_ID + "_0.png";
         }
-        
+
         dataPerPage.push(
           <Link to={"./form?req_id=" + data[i].REQ_ID}>
             <div className="card mt-2 card-custom" key={data[i.REQ_ID]}>
@@ -262,60 +302,108 @@ function App() {
   }
 
   const paginationBasic = (
-    <div className="d-flex align-items-center justify-content-center mt-3">
+    <div
+      className="d-flex align-items-center justify-content-center mt-3"
+      color="#4c4c4c"
+    >
       <Pagination size="sm">{items}</Pagination>
     </div>
   );
+
+  const statusData = [
+    {
+      name: "Issue",
+      item: issue,
+      overColor: "#1679AB",
+      outColor: "rgba(67, 156, 244, 0.58)",
+      st: 1,
+    },
+    {
+      name: "Approve",
+      item: approve,
+      overColor: "#1679AB",
+      outColor: "rgb(219 212 142)",
+      st: 2,
+    },
+    {
+      name: "PIC confirm",
+      item: picConfirm,
+      overColor: "#1679AB",
+      outColor: "rgb(249 204 107)",
+      st: 3,
+    },
+    {
+      name: "Finish",
+      item: finish,
+      overColor: "#1679AB",
+      outColor: "rgb(130 247 192)",
+      st: 4,
+    },
+    {
+      name: "Final Approve",
+      item: finalApprove,
+      overColor: "#1679AB",
+      outColor: "rgb(92 197 99)",
+      st: 5,
+    },
+    {
+      name: "Reject",
+      item: reject,
+      overColor: "#1679AB",
+      outColor: "rgb(129 129 129)",
+      st: 6,
+    },
+  ];
 
   return (
     <div className="background-custom">
       <div className="container">
         <div className="row mt-2">
           <div className="col-xl-3">
-            <div className="card text-left">
+            <div
+              className="card text-left"
+              style={{ margin: "10px 0px 5px 0px" }}
+            >
               <div
                 id="status_card"
                 style={{ color: "white" }}
                 className="card-body card-body-custom"
               >
-                <p>
-                  <a className="hash-tag" href="./?st=1">
-                    # Issue: {issue}
-                  </a>
-                </p>
-                <p>
-                  <a className="hash-tag" href="./?st=2">
-                    # Approve: {approve}
-                  </a>
-                </p>
-                <p>
-                  <a className="hash-tag" href="./?st=3">
-                    # PIC confirm: {picConfirm}
-                  </a>
-                </p>
-                <p>
-                  <a className="hash-tag" href="./?st=4">
-                    # Finish: {finish}
-                  </a>
-                </p>
-                <p>
-                  <a className="hash-tag" href="./?st=5">
-                    # Final Approve: {finalApprove}
-                  </a>
-                </p>
-                <p>
-                  <a className="hash-tag" href="./?st=6">
-                    # Reject: {reject}
-                  </a>
-                </p>
+                {statusData.map((e) => {
+                  return (
+                    <>
+                      <div
+                        style={{
+                          backgroundColor: color ? color : e.outColor,
+                          borderRadius: "0.5rem",
+                        }}
+                      >
+                        <a className="hash-tag" href={`./?st=${e.st}`}>
+                          <p style={{ margin: "10px", padding: "5px 10px" }}>
+                            <b>{e.name} : </b>
+                            {e.item}
+                          </p>
+                        </a>
+                      </div>
+                    </>
+                  );
+                })}
               </div>
             </div>
           </div>
           <div className="col-xl-9">
-            <div className="card text-center">
+            <div
+              className="card text-center"
+              style={{ margin: "10px 0px 5px 0px" }}
+              color="#464749"
+            >
               <div className="card-body card-body-custom">
                 <div>
-                  <div className="row">
+                  <div
+                    className="row"
+                    style={{ paddingTop: "15px" }}
+                    color="#464749"
+                  >
                     <div className="col-10">
                       <Form.Group
                         className="mb-3"
@@ -348,9 +436,9 @@ function App() {
               </div>
             </div>
             {dataPerPage}
+            {paginationBasic}
           </div>
         </div>
-        {paginationBasic}
       </div>
     </div>
   );

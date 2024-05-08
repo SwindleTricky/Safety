@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { BrowserRouter, Routes, Route, } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "./index.css";
 import App from "./App";
 import Navbarcomp from "./components/navbar";
@@ -14,6 +14,7 @@ import Testimage from "./pages/test_image";
 import Newcard from "./pages/new_card";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "sweetalert2/dist/sweetalert2.all.min.js";
+import Footer from "./components/footer";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 setInterval(() => {
@@ -29,7 +30,7 @@ setInterval(() => {
 root.render(
   <React.StrictMode>
     <BrowserRouter>
-      <Navbarcomp/>
+      <Navbarcomp />
       <Routes>
         <Route path="/" element={<App />} />
         <Route path="/login" element={<Login />} />
@@ -40,6 +41,7 @@ root.render(
         <Route path="/Test_image" element={<Testimage />} />
         <Route path="/Newcard" element={<Newcard />} />
       </Routes>
+      <Footer />
     </BrowserRouter>
   </React.StrictMode>
 );

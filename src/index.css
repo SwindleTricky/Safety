@@ -1,30 +1,52 @@
 body {
   color: white;
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+  font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
     monospace;
 }
 
 .left-detail {
-  background-color: #262D34;
+  background-color: #262d34;
 }
 
-.Nav-color{
-  background-color: #262D34 !important;
+.Nav-color {
+  background-color: #628d6f !important;
 }
 .navbar {
   -webkit-box-shadow: 0 8px 6px -6px #999;
   -moz-box-shadow: 0 8px 6px -6px #999;
-  box-shadow: 0 8px 4px -6px #999; 
-  background-color: #262D34 !important;
+  box-shadow: 0 8px 4px -6px #999;
+  /* background-color: #86d49d !important; */
 
   /* the rest of your styling */
+}
+body {
+  background-image: url("/src/images/bg-pattern-3.png"),
+    /* linear-gradient(to bottom, rgb(229, 237, 229), rgb(237, 238, 237)) !important; */
+    linear-gradient(to  bottom, rgb(230, 240, 230),rgb(198, 206, 198) ) !important;
+    background-size: cover !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-attachment: fixed !important;
+    height: 100vh !important;
+    display: flex !important;
+    flex-direction: column !important;
+    margin: 0 !important;
+    height: 100% !important;
+}
+main {
+  flex: 1 !important; /* เนื้อหาหลักจะใช้พื้นที่ที่เหลือทั้งหมด */
+}
+
+footer {
+  flex-shrink: 0 !important; /* footer จะไม่หดตัวเมื่อมีพื้นที่ไม่เพียงพอ */
+  position: relative !important;
 }

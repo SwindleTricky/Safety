@@ -57,10 +57,10 @@ function Navbarcomp() {
       {parseInt(cap) === 1 ? (
         ""
       ) : (
-        <Navbar className="Nav-color" bg="light" data-bs-theme="light">
+        <Navbar data-bs-theme="light" style={{ backgroundColor: "#abd8ae" }} >
           <Container>
-            <Navbar.Brand href="/" style={{ color: "#337a2c" }}>
-              SVOE
+            <Navbar.Brand href="/" style={{ color: "rgb(27 43 26)" }}>
+              <b>SVOE</b>
             </Navbar.Brand>
             <Nav className="me-auto">
               <Nav.Link href="/">Home</Nav.Link>
