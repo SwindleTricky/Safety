@@ -448,7 +448,7 @@ const FormDetail = () => {
       <summary>
         <div className="row">
           <div className="col-6 d-flex align-items-start justify-content-start">
-            {status === 1 ? (
+            {status === 1 || status === 2 ? (
               <button
                 className="btn btn-danger"
                 onClick={() =>

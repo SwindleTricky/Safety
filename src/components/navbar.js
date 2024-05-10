@@ -64,7 +64,7 @@ function Navbarcomp() {
             </Navbar.Brand>
             <Nav className="me-auto">
               <Nav.Link href="/">Home</Nav.Link>
-              <Nav.Link href="/">Detail</Nav.Link>
+              <Nav.Link href="https://forms.gle/z5YBHqWoJQQ83bgQ6">Request Form</Nav.Link>
             </Nav>
             <Nav>{isLogin}</Nav>
           </Container>
