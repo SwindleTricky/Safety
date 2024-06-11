@@ -11,7 +11,6 @@ import Swal from "sweetalert2";
 import Resizer from "react-image-file-resizer";
 import img_404 from "../images/404_img.png";
 import { riskMode } from "../function/riskMode";
-import Footer from "../components/footer";
 
 const FormDetail = () => {
   const api_service = process.env.REACT_APP_API_SERVICE;
@@ -828,6 +827,9 @@ const FormDetail = () => {
                 risk_level: initRisk,
                 atwork: atwork,
                 location: data[0].LOCATION_NAME,
+                EMP_CD : data[0].EMP_CD,
+                RISK_GUIDE: data[0]?.REMARK,
+                IMG: data[0].IMG
               },
               {
                 headers: {
