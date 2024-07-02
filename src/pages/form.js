@@ -382,7 +382,9 @@ const FormDetail = () => {
         ) : (
           <>
             <label id="guideForm">Counter measure :</label>
-            <textarea id="action" disabled>{data[0].ACTION}</textarea>
+            <textarea id="action" disabled>
+              {data[0].ACTION}
+            </textarea>
           </>
         )}
       </div>
@@ -394,7 +396,9 @@ const FormDetail = () => {
       ) : (
         <div className="nice-form-group">
           <label id="guideForm">Remark :</label>
-          <textarea id="remark" disabled>{data[0].REMARK_DETAIL}</textarea>
+          <textarea id="remark" disabled>
+            {data[0].REMARK_DETAIL}
+          </textarea>
         </div>
       )}
 
@@ -707,7 +711,7 @@ const FormDetail = () => {
                           {
                             value: 2,
                             label:
-                              "ระดับ 2 (กลาง) : จำเป็นต้องได้รับการรักษาโดยแพทย์ ที่โรงพยาบาลย์",
+                              "ระดับ 2 (กลาง) : จำเป็นต้องได้รับการรักษาโดยแพทย์ ที่โรงพยาบาล",
                           },
                           {
                             value: 3,
@@ -761,7 +765,8 @@ const FormDetail = () => {
                               <Image
                                 style={{ width: "10rem", height: "10rem" }}
                                 src={
-                                  `data:image/png;base64,${image_after}`
+                                  `data:image/png;base64,${image_after}` ===
+                                  undefined
                                     ? `data:image/png;base64,${image_after}`
                                     : img_404
                                 }
@@ -770,7 +775,8 @@ const FormDetail = () => {
                                 onClick={() => {
                                   Swal.fire({
                                     imageUrl:
-                                      `data:image/png;base64,${image_after}`
+                                      `data:image/png;base64,${image_after}` ===
+                                      undefined
                                         ? `data:image/png;base64,${image_after}`
                                         : img_404,
                                     showConfirmButton: false, // Disable OK button
@@ -827,9 +833,9 @@ const FormDetail = () => {
                 risk_level: initRisk,
                 atwork: atwork,
                 location: data[0].LOCATION_NAME,
-                EMP_CD : data[0].EMP_CD,
+                EMP_CD: data[0].EMP_CD,
                 RISK_GUIDE: data[0]?.REMARK,
-                IMG: data[0].IMG
+                IMG: data[0].IMG,
               },
               {
                 headers: {
