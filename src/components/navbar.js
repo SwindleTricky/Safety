@@ -65,6 +65,7 @@ function Navbarcomp() {
             <Nav className="me-auto">
               <Nav.Link href="/">Home</Nav.Link>
               <Nav.Link href="https://forms.gle/z5YBHqWoJQQ83bgQ6">Request Form</Nav.Link>
+              <Nav.Link href="https://app.powerbi.com/reportEmbed?reportId=42a7e0b0-cd59-44eb-985f-7787cb53fdb5&autoAuth=true&ctid=afff1096-7fd8-4cdd-879a-7db50a47287a">Dashboard</Nav.Link>
             </Nav>
             <Nav>{isLogin}</Nav>
           </Container>

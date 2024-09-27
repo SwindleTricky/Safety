@@ -366,11 +366,11 @@ const FormDetail = () => {
       <div className="nice-form-group">
         <label id="guideForm">PIC name :</label>
         <small>
-          {pICFullName[0].EMP_CD +
+          {pICFullName[0]?.EMP_CD +
             " " +
-            pICFullName[0].EMP_NAME +
+            pICFullName[0]?.EMP_NAME +
             " " +
-            pICFullName[0].SECTION}
+            pICFullName[0]?.SECTION}
         </small>
       </div>
       <div className="nice-form-group">
@@ -430,7 +430,7 @@ const FormDetail = () => {
           <div className="col-6 mt-3">
             <Form.Group controlId="formFile" className="mb-3">
               <Form.Label>Insert your image :</Form.Label>
-              <Form.Control type="file" onChange={handleFileChange} />
+              <Form.Control type="file" onChange={handleFileChange} required/>
             </Form.Group>
           </div>
         ) : (
@@ -765,7 +765,7 @@ const FormDetail = () => {
                               <Image
                                 style={{ width: "10rem", height: "10rem" }}
                                 src={
-                                  `data:image/png;base64,${image_after}` ===
+                                  `data:image/png;base64,${image_after}` !==
                                   undefined
                                     ? `data:image/png;base64,${image_after}`
                                     : img_404
@@ -775,7 +775,7 @@ const FormDetail = () => {
                                 onClick={() => {
                                   Swal.fire({
                                     imageUrl:
-                                      `data:image/png;base64,${image_after}` ===
+                                      `data:image/png;base64,${image_after}` !==
                                       undefined
                                         ? `data:image/png;base64,${image_after}`
                                         : img_404,
